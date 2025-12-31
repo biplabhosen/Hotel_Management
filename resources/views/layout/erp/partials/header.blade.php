@@ -225,7 +225,7 @@
                                     </ul>
                                 </div>
                                 <div class="subscription-logout">
-                                    <a href="signin.html">Log Out</a>
+                                    <a href="{{route('logout')}}">Log Out</a>
                                 </div>
                             </div>
                         </div>
