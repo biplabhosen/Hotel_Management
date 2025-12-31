@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserNotification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -63,4 +65,15 @@ class UserController extends Controller
     {
         //
     }
+
+    public function sendmail()
+    {
+        $users=User::all();
+        foreach ($users as $key => $user) {
+
+            Mail::to($user->email)->send(new UserNotification($user));
+        }
+        return "mail send succecefully";
+    }
+
 }

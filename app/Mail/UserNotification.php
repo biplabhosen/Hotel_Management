@@ -16,9 +16,11 @@ class UserNotification extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public $user;
+
+    public function __construct($user)
     {
-        //
+        $this->user = $user;
     }
 
     /**
@@ -27,7 +29,7 @@ class UserNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Notification',
+            subject: 'User Greetings',
         );
     }
 
@@ -37,7 +39,7 @@ class UserNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.userGreetings',
         );
     }
 
