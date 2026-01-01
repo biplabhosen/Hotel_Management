@@ -71,7 +71,7 @@ class UserController extends Controller
         $users=User::all();
         foreach ($users as $key => $user) {
 
-            Mail::to($user->email)->send(new UserNotification($user));
+            Mail::to($user->email)->queue(new UserNotification($user));
         }
         return "mail send succecefully";
     }
