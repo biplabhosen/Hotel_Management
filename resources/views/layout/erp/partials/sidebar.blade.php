@@ -30,7 +30,7 @@
                         </li>
                         <li>
                             <a href="javascript:void(0);"><i class="fe fe-briefcase"></i>
-                                <span>Services</span>
+                                <span>Bookings</span>
 								<span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
                             </a>
 							<ul>
@@ -47,11 +47,25 @@
                         </li>
                         <li>
                             <a href="categories.html"><i class="fe fe-file-text"></i>
-                                <span>Categories</span>
+                                <span>Occupancy</span>
                             </a>
                         </li>
                         <li>
-                            <a href="sub-categories.html"><i class="fe fe-clipboard"></i> <span>Sub Categories</span></a>
+                            <a href="javascript:void(0);"><i class="fe fe-clipboard"></i></i>
+                                <span>Rooms</span>
+								<span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
+                            </a>
+							<ul>
+                                <li>
+                                    <a  href="add-service.html">Add Service</a>
+                                </li>
+                                <li>
+                                    <a href="services.html">Services</a>
+                                </li>
+								<li>
+                                    <a href="service-settings.html">Service Settings</a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="submenu">
                             <a href="javascript:void(0);"><i class="fe fe-star"></i>

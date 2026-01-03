@@ -10,7 +10,7 @@
                                     <div class="home-userhead">
                                         <div class="home-usercount">
                                             <span><img src="{{asset('assets')}}/img/icons/user.svg" alt="img"></span>
-                                            <h6>User</h6>
+                                            <h6>New Booking</h6>
                                         </div>
                                         <div class="home-useraction">
                                             <a class="delete-table bg-white" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">
@@ -49,7 +49,7 @@
                                     <div class="home-userhead">
                                         <div class="home-usercount">
                                             <span><img src="{{asset('assets')}}/img/icons/user-circle.svg" alt="img"></span>
-                                            <h6>Providers</h6>
+                                            <h6>Available Rooms</h6>
                                         </div>
                                         <div class="home-useraction">
                                             <a class="delete-table bg-white" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">
@@ -88,7 +88,7 @@
                                     <div class="home-userhead">
                                         <div class="home-usercount">
                                             <span><img src="{{asset('assets')}}/img/icons/service.svg" alt="img"></span>
-                                            <h6>Service</h6>
+                                            <h6>Checkout</h6>
                                         </div>
                                         <div class="home-useraction">
                                             <a class="delete-table bg-white" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">
@@ -127,7 +127,7 @@
                                     <div class="home-userhead">
                                         <div class="home-usercount">
                                             <span><img src="{{asset('assets')}}/img/icons/money.svg" alt="img"></span>
-                                            <h6>Subscription</h6>
+                                            <h6>Revenue</h6>
                                         </div>
                                         <div class="home-useraction">
                                             <a class="delete-table bg-white" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">
