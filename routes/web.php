@@ -20,7 +20,7 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
 
     Route::get('/', 'index');
     Route::get('create', 'create');
-    Route::get('occupancy', 'occupency');
+    // Route::get('occupancy', 'occupency');
 });
 
 Route::middleware('auth')->prefix('room')->controller(RoomController::class)->group(function(){
@@ -28,5 +28,7 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
     Route::get('/', 'index');
     Route::get('create', 'create');
     Route::post('store', 'store');
+    Route::get('edit', 'edit');
+    Route::put('update', 'update');
     Route::get('occupancy', 'occupency');
 });

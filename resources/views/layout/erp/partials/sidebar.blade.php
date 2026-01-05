@@ -1,7 +1,7 @@
 <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <a href="index.html">
+                    <a href="{{ url('/') }}">
                         <img src="{{asset('assets')}}/img/logo.svg" class="img-fluid logo" alt="Logo">
                     </a>
                     <a href="index.html">
@@ -23,7 +23,7 @@
                             <h6>Home</h6>
                         </li>
                         <li>
-                            <a href="index.html" class="active"><i class="fe fe-grid"></i> <span>Dashboard</span></a>
+                            <a href="{{ url('/') }}" class="active"><i class="fe fe-grid"></i> <span>Dashboard</span></a>
                         </li>
                         <li class="menu-title">
                             <h6>Services</h6>
@@ -46,7 +46,7 @@
                             </ul>
                         </li>
                         <li>
-                            <a href="{{url('booking/occupancy')}}"><i class="fe fe-file-text"></i>
+                            <a href="{{url('room/occupancy')}}"><i class="fe fe-file-text"></i>
                                 <span>Occupancy</span>
                             </a>
                         </li>

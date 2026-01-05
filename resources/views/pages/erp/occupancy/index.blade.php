@@ -1,6 +1,9 @@
 @extends('layout.erp.app')
 
 @section('content')
+@php
+    // print_r($rooms)
+@endphp
  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
@@ -175,24 +178,29 @@
         </div>
 
         <!-- AVAILABLE ROOM -->
+        @foreach ($rooms as $room)
         <div class="col-md-3">
             <div class="room-card">
                 <div class="d-flex justify-content-between mb-2">
-                    <strong>Room 102</strong>
+                    <strong>Room {{  $room->room_number }}</strong>
                     <span class="badge-status status-available">
-                        <i class="bi bi-check-circle me-1"></i> Available
+                        <i class="bi bi-check-circle me-1"></i> {{ $room->status  }}
                     </span>
                 </div>
 
-                <small class="text-muted">Deluxe Room</small>
+                <small class="text-muted">{{ $room->roomType?->name  }} Room</small>
+                <p class="mt-2 mb-1">Floor {{ $room->floor  }} </p>
 
-                <p class="mt-2 mb-1">$280 / night</p>
+                <p class="mt-2 mb-1">${{ $room->roomType?->price_per_night  }} / night</p>
+                <p class="mt-2 mb-1">{{ $room->roomType?->bed_type  }} Bed</p>
 
-                <small>2 Adults</small>
+                <small>{{ $room->roomType?->capacity  }} Adults</small>
 
                 <div class="amenities mt-2">
                     <i class="bi bi-wifi"></i>
                     <i class="bi bi-tv"></i>
+                    <i class="bi bi-cup-hot"></i>
+                    <i class="bi bi-snow"></i>
                 </div>
 
                 <button class="btn btn-success btn-sm w-100 mt-3">
@@ -200,7 +208,7 @@
                 </button>
             </div>
         </div>
-
+         @endforeach
     </div>
 </div>
 
