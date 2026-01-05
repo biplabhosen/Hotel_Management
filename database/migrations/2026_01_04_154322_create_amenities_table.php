@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('booking_services', function (Blueprint $table) {
+        Schema::create('amenities', function (Blueprint $table) {
             $table->id();
-            $table->integer('booking_id');
-            $table->integer('service_id');
-            $table->integer('quantity')->default(1);
+
+            $table->string('name')->unique();     // WiFi, Balcony, Sea View
+            $table->string('icon')->nullable();   // feather icon name
+
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('booking_services');
+        Schema::dropIfExists('amenities');
     }
 };

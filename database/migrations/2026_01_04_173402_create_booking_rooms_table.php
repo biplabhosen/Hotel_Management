@@ -11,16 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create('booking_rooms', function (Blueprint $table) {
             $table->id();
-            $table->integer('hotel_id');
-            $table->integer('guest_id');
+
+            // Relations
+            $table->integer('booking_id');
+
             $table->integer('room_id');
+
+            // Freeze price at booking time
+            $table->decimal('price_per_night', 10, 2);
+
+            // Room-level stay dates
             $table->date('check_in');
             $table->date('check_out');
-            $table->integer('total_guests');
-            $table->enum('status', ['reserved', 'checked_in', 'checked_out', 'cancelled']);
+
             $table->timestamps();
+
+            // Prevent duplicate room assignment in same booking
+            $table->unique(['booking_id', 'room_id']);
+
+            // Performance index for availability check
         });
     }
 
@@ -29,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('booking_rooms');
     }
 };

@@ -13,11 +13,29 @@ return new class extends Migration
     {
         Schema::create('room_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hotel_id')->constrained()->cascadeOnDelete();
-            $table->string('type_name');
+
+            // Multi-tenant support
+            $table->integer('hotel_id');
+
+            // Room type identity
+            $table->string('name'); // Deluxe, Suite, Executive
+            $table->string('code')->nullable(); // DLX, STE (optional)
+
+            // Bed & capacity
+            $table->string('bed_type'); // King, Queen, Twin
+            $table->unsignedTinyInteger('bed_count')->default(1);
+            $table->unsignedTinyInteger('capacity'); // Max guests
+
+            // Pricing
             $table->decimal('price_per_night', 10, 2);
-            $table->integer('max_guests');
+
+            // Description & status
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
+
+            // Prevent duplicate room types per hotel
         });
     }
 

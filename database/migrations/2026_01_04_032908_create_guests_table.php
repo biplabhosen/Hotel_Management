@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hotel_id')->constrained()->cascadeOnDelete();
+            $table->integer('hotel_id');
             $table->string('full_name');
             $table->string('phone');
             $table->string('email')->nullable();

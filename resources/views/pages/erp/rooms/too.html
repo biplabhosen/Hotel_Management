@@ -19,106 +19,251 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
- <style>
-.room-card {
+<style>
+body {
+    background: #f4f7fb;
+}
+
+/* Card */
+.card-form {
     background: #fff;
-    border-radius: 14px;
-    padding: 16px;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.06);
+}
+
+/* Floating label */
+.form-group {
     position: relative;
 }
 
-.room-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 35px rgba(0,0,0,0.15);
+.form-group input,
+.form-group select,
+.form-group textarea {
+    height: 50px;
+    padding: 14px 12px;
 }
 
-.badge-status {
+.form-group textarea {
+    height: auto;
+}
+
+.form-group label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 14px;
+    color: #6c757d;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: 0.2s ease;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group select:focus + label,
+.form-group select:valid + label,
+.form-group textarea:focus + label,
+.form-group textarea:not(:placeholder-shown) + label {
+    top: -6px;
     font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 20px;
+    color: #6c7ae0;
 }
 
-.status-occupied { background: #fde2e2; color: #842029; }
-.status-available { background: #d1e7dd; color: #0f5132; }
+.form-control:focus,
+.form-select:focus {
+    border-color: #6c7ae0;
+    box-shadow: none;
+}
 
-.amenities i {
-    width: 18px;
-    height: 18px;
-    margin-right: 6px;
-    color: #198754;
+/* Upload */
+.upload-box {
+    border: 2px dashed #cfd6e0;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background: #fafbfe;
+}
+
+.upload-box input {
+    display: none;
+}
+
+.upload-box label {
     cursor: pointer;
-}
-
-.amenities i:hover {
-    color: #0d6efd;
-}
-
-.check-time {
-    font-size: 13px;
-    background: #f8f9fa;
-    padding: 6px 10px;
-    border-radius: 6px;
+    color: #6c7ae0;
+    font-weight: 500;
 }
 </style>
 
 
+
+
 </head>
 <body>
-
 <div class="container-fluid p-4">
+    <div class="card-form">
 
+        <h5 class="mb-4">Add Room</h5>
 
+        <form>
+            <div class="row g-3">
 
-    <!-- ROOMS -->
-    <div class="row g-4">
-
-        <!-- ROOM CARD -->
-
-
-        <!-- AVAILABLE ROOM -->
-        <div class="col-md-3">
-            <div class="room-card">
-                <div class=" d-flex justify-content-between mb-2">
-                    <strong>Room 102</strong>
-                    <span class="badge-status status-available">
-                        <i class="bi bi-check-circle me-1"></i> Available
-                    </span>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " required>
+                        <label>Room No *</label>
+                    </div>
                 </div>
 
-                <small class="text-muted">Deluxe Room</small>
-
-                <p class="mt-2 mb-1">$280 / night</p>
-
-                <small>2 Adults</small>
-
-                <div class="amenities mt-2">
-                    <i class="bi bi-wifi"></i>
-                    <i class="bi bi-tv"></i>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select class="form-select" required>
+                            <option value="" disabled selected hidden></option>
+                            <option>Deluxe</option>
+                            <option>Super Deluxe</option>
+                            <option>Suite</option>
+                        </select>
+                        <label>Select Room Type *</label>
+                    </div>
                 </div>
 
-                <button class="btn btn-success btn-sm w-100 mt-3">
-                    <i class="bi bi-plus-circle me-1"></i> Add Guest
-                </button>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select class="form-select" required>
+                            <option value="" disabled selected hidden></option>
+                            <option>AC</option>
+                            <option>Non AC</option>
+                        </select>
+                        <label>AC / Non AC *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select class="form-select" required>
+                            <option value="" disabled selected hidden></option>
+                            <option>Breakfast</option>
+                            <option>Half Board</option>
+                            <option>Full Board</option>
+                        </select>
+                        <label>Select Meal *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="number" class="form-control" placeholder=" " required>
+                        <label>Capacity *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="number" class="form-control" placeholder=" " required>
+                        <label>Floor Number *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select class="form-select" required>
+                            <option value="" disabled selected hidden></option>
+                            <option>Available</option>
+                            <option>Occupied</option>
+                            <option>Maintenance</option>
+                        </select>
+                        <label>Status *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select class="form-select" required>
+                            <option value="" disabled selected hidden></option>
+                            <option>Single</option>
+                            <option>Double</option>
+                            <option>King</option>
+                        </select>
+                        <label>Bed Type *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="number" class="form-control" placeholder=" ">
+                        <label>Rent per Night</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="number" class="form-control" placeholder=" " required>
+                        <label>Number of Beds *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="number" class="form-control" placeholder=" " required>
+                        <label>Room Size (sq ft) *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select class="form-select" required>
+                            <option value="" disabled selected hidden></option>
+                            <option>City View</option>
+                            <option>Sea View</option>
+                        </select>
+                        <label>View Type *</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="text" class="form-control is-invalid" placeholder=" " required>
+                        <label>Contact Mobile *</label>
+                        <div class="invalid-feedback">Mobile is required</div>
+                    </div>
+                </div>
+
+                <!-- Upload -->
+                <div class="col-12">
+                    <div class="upload-box">
+                        <label>
+                            <i data-feather="upload"></i> Choose file
+                            <input type="file">
+                        </label>
+                        <p class="text-muted mt-2">or drag and drop file here</p>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" placeholder=" "></textarea>
+                        <label>Note</label>
+                    </div>
+                </div>
+
             </div>
-        </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-secondary" disabled>Submit</button>
+                <button class="btn btn-danger">Cancel</button>
+            </div>
+
+        </form>
 
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-$(document).ready(function () {
-    feather.replace();
-
-    const tooltipTriggerList = [].slice.call(
-        document.querySelectorAll('[data-bs-toggle="tooltip"]')
-    );
-
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
+feather.replace();
 </script>
-
 </body>
 </html>

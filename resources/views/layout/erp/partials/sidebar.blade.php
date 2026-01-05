@@ -35,18 +35,18 @@
                             </a>
 							<ul>
                                 <li>
-                                    <a  href="add-service.html">Add Service</a>
+                                    <a  href="{{url('booking')}}">All Bookings</a>
                                 </li>
                                 <li>
-                                    <a href="services.html">Services</a>
+                                    <a href="{{url('booking/create')}}">Add Bookings</a>
                                 </li>
 								<li>
-                                    <a href="service-settings.html">Service Settings</a>
+                                    <a href="service-settings.html">Edit Bookings</a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="categories.html"><i class="fe fe-file-text"></i>
+                            <a href="{{url('booking/occupancy')}}"><i class="fe fe-file-text"></i>
                                 <span>Occupancy</span>
                             </a>
                         </li>
@@ -57,13 +57,13 @@
                             </a>
 							<ul>
                                 <li>
-                                    <a  href="add-service.html">Add Service</a>
+                                    <a href="{{url('room')}}">All Rooms</a>
                                 </li>
                                 <li>
-                                    <a href="services.html">Services</a>
+                                    <a href="{{url('room/create')}}">Add Room</a>
                                 </li>
 								<li>
-                                    <a href="service-settings.html">Service Settings</a>
+                                    <a href="{{url('room/edit')}}">Edit Room</a>
                                 </li>
                             </ul>
                         </li>
