@@ -44,19 +44,19 @@ class RoomController extends Controller
         // $room->save();
         DB::transaction(function () use ($request, $hotelId) {
 
-            $roomType = RoomType::create([
-                'hotel_id' => $hotelId,
-                'name' => $request->room_type_id,
-                'bed_type' => $request->bed_type,
-                'price_per_night' => $request->price_per_night,
-                'bed_count' => $request->bed_count,
-                'capacity' => $request->capacity,
-            ]);
+            // $roomType = RoomType::create([
+            //     'hotel_id' => $hotelId,
+            //     'name' => $request->room_type_id,
+            //     'bed_type' => $request->bed_type,
+            //     'price_per_night' => $request->price_per_night,
+            //     'bed_count' => $request->bed_count,
+            //     'capacity' => $request->capacity,
+            // ]);
 
             Room::create([
                 'hotel_id' => $hotelId,
                 'room_number' => $request->room_number,
-                'room_type_id' => $roomType->id,
+                'room_type_id' => $request->roomType_id,
                 'floor' => $request->floor,
                 'status' => $request->status,
             ]);

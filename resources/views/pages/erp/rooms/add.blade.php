@@ -114,11 +114,12 @@
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <select name="room_type_id" class="form-select" required>
+                            <select name="roomType_id" class="form-select" required>
                                 <option value="" disabled selected hidden></option>
-                                <option value="Deluxe">Deluxe</option>
-                                <option value="Super Deluxe">Super Deluxe</option>
-                                <option value="Suite">Suite</option>
+                                <option value="1">Super Deluxe</option>
+                                <option value="2">Suite</option>
+                                <option value="3">Deluxe</option>
+                                <option value="4">Family</option>
                             </select>
                             <label>Select Room Type *</label>
                         </div>
