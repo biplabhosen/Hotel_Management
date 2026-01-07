@@ -29,7 +29,18 @@ class Amenity extends Model
     {
         return $this->belongsToMany(
             RoomType::class,
-            'amenity_room_type'
+            'amenity_room_type',
+            'amenity_id',
+        'room_type_id'
         )->withTimestamps();
     }
+//     public function roomTypes()
+// // {
+// //     return $this->belongsToMany(
+// //         RoomType::class,
+// //         'amenity_room_type',
+// //         'amenity_id',
+// //         'room_type_id'
+// //     );
+// // }
 }

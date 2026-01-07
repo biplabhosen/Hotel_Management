@@ -197,8 +197,8 @@
                                 <span class="animate-circle"></span>
                             </span>
                             <span class="user-content">
-                                <span class="user-name">John Smith</span>
-                                <span class="user-details">Demo User</span>
+                                <span class="user-name">{{Auth::user()->name}}</span>
+                                <span class="user-details">Admin</span>
                             </span>
                         </a>
                         <div class="dropdown-menu menu-drop-user">
@@ -209,8 +209,8 @@
                                             <img src="{{asset('assets')}}/img/user.jpg" alt="img" class="profilesidebar">
                                         </span>
                                         <span class="profile-content">
-                                            <span>John Smith</span>
-                                            <span><span class="__cf_email__" data-cfemail="612b0e090f210419000c110d044f020e0c">[email&#160;protected]</span></span>
+                                            <span>{{ Auth::user()->name }}</span>
+                                            <span style="font-size: 10px">{{ Auth::user()->email }}</span>
                                         </span>
                                     </a>
                                 </div>

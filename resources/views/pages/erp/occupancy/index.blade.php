@@ -182,14 +182,17 @@
         <div class="col-md-3">
             <div class="room-card">
                 <div class="d-flex justify-content-between mb-2">
-                    <strong>Room {{  $room->room_number }}</strong>
-                    <span class="badge-status status-available">
-                        <i class="bi bi-check-circle me-1"></i> {{ $room->status  }}
+                    <span>
+                        <strong>Room {{  $room->room_number }}</strong><br>
+                        {{-- <small >Floor {{ $room->floor  }} </small> --}}
+
+                    </span>
+                    <span class="badge-status status-{{ $room->status  }}">
+                        <i class="bi bi-check-circle me-1"></i> {{ ucfirst($room->status)  }}
                     </span>
                 </div>
 
-                <small class="text-muted">{{ $room->roomType?->name  }} Room</small>
-                <p class="mt-2 mb-1">Floor {{ $room->floor  }} </p>
+                <small class="text-muted">{{ $room->roomType?->name  }}</small>
 
                 <p class="mt-2 mb-1">${{ $room->roomType?->price_per_night  }} / night</p>
                 <p class="mt-2 mb-1">{{ $room->roomType?->bed_type  }} Bed</p>
@@ -197,10 +200,9 @@
                 <small>{{ $room->roomType?->capacity  }} Adults</small>
 
                 <div class="amenities mt-2">
-                    <i class="bi bi-wifi"></i>
-                    <i class="bi bi-tv"></i>
-                    <i class="bi bi-cup-hot"></i>
-                    <i class="bi bi-snow"></i>
+                    @foreach ($room->roomType->amenities as $amenity)
+                    <i class="bi bi-{{$amenity->icon}}" title="{{$amenity->name}}" ></i>
+                    @endforeach
                 </div>
 
                 <button class="btn btn-success btn-sm w-100 mt-3">

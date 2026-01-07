@@ -45,11 +45,20 @@ class RoomType extends Model
     }
 
     // Optional: amenities via pivot
+    // public function amenities()
+    // {
+    //     return $this->belongsToMany(
+    //         Amenity::class,
+    //         'amenity_room_type'
+    //     )->withTimestamps();
+    // }
     public function amenities()
-    {
-        return $this->belongsToMany(
-            Amenity::class,
-            'amenity_room_type'
-        )->withTimestamps();
-    }
+{
+    return $this->belongsToMany(
+        Amenity::class,
+        'amenity_room_type',
+        'room_type_id',
+        'amenity_id'
+    );
+}
 }
