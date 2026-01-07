@@ -45,6 +45,84 @@
             color: #28a745;
             margin-right: 5px;
         }
+        .room-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.status-available {
+    background: #e6f7ee;
+    color: #198754;
+}
+
+.status-occupied {
+    background: #fdecea;
+    color: #dc3545;
+}
+
+.amenities i {
+    font-size: 1.1rem;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.amenities i:hover {
+    color: #0d6efd;
+}
+.room-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.room-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.badge-status {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.status-available {
+    background: #e6f7ee;
+    color: #198754;
+}
+
+.status-occupied {
+    background: #fdecea;
+    color: #dc3545;
+}
+
+.status-booked {
+    background: #fff3cd;
+    color: #ffc107;
+}
+
+.status-icons span {
+    font-size: 0.7rem;
+}
+
+.amenities i {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+.amenities i:hover {
+    color: #0d6efd;
+}
+
     </style>
 
 <div class="container-fluid p-4">
@@ -141,7 +219,7 @@
     <div class="row g-4">
 
         <!-- ROOM CARD -->
-        <div class="col-md-3">
+        {{-- <div class="col-md-3">
             <div class="room-card">
                 <div class="d-flex justify-content-between mb-2">
                     <strong>
@@ -175,44 +253,159 @@
                     <i class="bi bi-person-vcard me-1"></i> Guest Details
                 </button>
             </div>
-        </div>
+        </div> --}}
 
         <!-- AVAILABLE ROOM -->
         @foreach ($rooms as $room)
-        <div class="col-md-3">
-            <div class="room-card">
-                <div class="d-flex justify-content-between mb-2">
-                    <span>
-                        <strong>Room {{  $room->room_number }}</strong><br>
-                        {{-- <small >Floor {{ $room->floor  }} </small> --}}
+<div class="col-md-3">
+    <div class="room-card h-100" data-bs-toggle="tooltip" title="Room {{ $room->room_number }}">
 
-                    </span>
-                    <span class="badge-status status-{{ $room->status  }}">
-                        <i class="bi bi-check-circle me-1"></i> {{ ucfirst($room->status)  }}
-                    </span>
-                </div>
-
-                <small class="text-muted">{{ $room->roomType?->name  }}</small>
-
-                <p class="mt-2 mb-1">${{ $room->roomType?->price_per_night  }} / night</p>
-                <p class="mt-2 mb-1">{{ $room->roomType?->bed_type  }} Bed</p>
-
-                <small>{{ $room->roomType?->capacity  }} Adults</small>
-
-                <div class="amenities mt-2">
-                    @foreach ($room->roomType->amenities as $amenity)
-                    <i class="bi bi-{{$amenity->icon}}" title="{{$amenity->name}}" ></i>
-                    @endforeach
-                </div>
-
-                <button class="btn btn-success btn-sm w-100 mt-3">
-                    <i class="bi bi-plus-circle me-1"></i> Add Guest
-                </button>
+        <!-- Header -->
+        <div class="d-flex justify-content-between mb-2">
+            <div>
+                <strong>
+                    <i class="bi bi-door-open me-1"></i>
+                    Room {{ $room->room_number }}
+                </strong><br>
+                <small class="text-muted">
+                    <i class="bi bi-layers me-1"></i>
+                    Floor {{ $room->floor }}
+                </small>
             </div>
+
+            <!-- Status -->
+            <span class="badge-status status-{{ $room->status }}">
+                @if ($room->status === 'available')
+                    <i class="bi bi-check-circle me-1"></i>
+                @elseif ($room->status === 'occupied')
+                    <i class="bi bi-person-fill-lock me-1"></i>
+                @elseif ($room->status === 'booked')
+                    <i class="bi bi-calendar-check me-1"></i>
+                @endif
+                {{ ucfirst($room->status) }}
+            </span>
         </div>
-         @endforeach
+
+        <!-- Status Icons -->
+        <div class="d-flex gap-3 text-muted mb-2 status-icons">
+            <span><i class="bi bi-check-circle"></i> Available</span>
+            <span><i class="bi bi-calendar-check"></i> Booked</span>
+            <span><i class="bi bi-person-fill-lock"></i> Occupied</span>
+        </div>
+
+        <!-- Room Type -->
+        <small class="text-muted">
+            <i class="bi bi-star-fill text-warning me-1"></i>
+            {{ $room->roomType?->name }}
+        </small>
+
+        <p class="mt-2 mb-1">
+            <i class="bi bi-currency-dollar"></i>
+            {{ $room->roomType?->price_per_night }} / night
+        </p>
+
+        <p class="mb-1">
+            <i class="bi bi-moon-stars me-1"></i>
+            {{ ucfirst($room->roomType?->bed_type) }} Bed
+        </p>
+
+        <small>
+            <i class="bi bi-people me-1"></i>
+            {{ $room->roomType?->capacity }} Adults
+        </small>
+
+        <!-- Amenities -->
+        <div class="amenities mt-2 d-flex gap-2">
+            @foreach ($room->roomType->amenities as $amenity)
+                <i class="bi bi-{{ $amenity->icon }}"
+                   data-bs-toggle="tooltip"
+                   title="{{ $amenity->name }}"></i>
+            @endforeach
+        </div>
+
+        <!-- Status-wise Button -->
+        <div class="mt-3">
+            @if ($room->status === 'available')
+                <button class="btn btn-success btn-sm w-100"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#guestOffcanvas">
+                    <i class="bi bi-person-plus me-1"></i> Add Guest
+                </button>
+            @elseif ($room->status === 'occupied')
+                <button class="btn btn-primary btn-sm w-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#guestModal">
+                    <i class="bi bi-person-vcard me-1"></i> View Guest
+                </button>
+            @elseif ($room->status === 'booked')
+                <button class="btn btn-warning btn-sm w-100">
+                    <i class="bi bi-calendar-plus me-1"></i> Book Now
+                </button>
+            @endif
+        </div>
+
+    </div>
+</div>
+@endforeach
+
     </div>
 </div>
 
 
 @endsection
+<div class="modal fade" id="guestModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+            <i class="bi bi-person-vcard me-1"></i> Guest Details
+        </h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Name:</strong> John Doe</p>
+        <p><strong>Phone:</strong> +8801XXXXXXXXX</p>
+        <p><strong>Check-in:</strong> 12 Jan 2026</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-end" id="guestOffcanvas">
+  <div class="offcanvas-header">
+    <h5>
+        <i class="bi bi-person-plus me-1"></i> Add Guest
+    </h5>
+    <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <form>
+        <div class="mb-3">
+            <label class="form-label">Guest Name</label>
+            <input type="text" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control">
+        </div>
+
+        <button class="btn btn-success w-100">
+            <i class="bi bi-check-circle me-1"></i> Confirm Check-in
+        </button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+
+    tooltipTriggerList.map(function (el) {
+        return new bootstrap.Tooltip(el);
+    });
+});
+</script>
