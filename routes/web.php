@@ -20,6 +20,10 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
 
     Route::get('/', 'index');
     Route::get('create', 'create');
+    Route::post('store', 'store');
+    Route::get('edit', 'edit');
+    Route::put('update', 'update');
+    Route::get('available', 'availableRooms');
     // Route::get('occupancy', 'occupency');
 });
 

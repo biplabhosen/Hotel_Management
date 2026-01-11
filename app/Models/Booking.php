@@ -9,18 +9,19 @@ class Booking extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'hotel_id',
-        'guest_name',
-        'guest_email',
-        'guest_phone',
-        'check_in',
-        'check_out',
-        'status',
-        'total_amount',
-        'paid_amount',
-        'booking_reference',
-    ];
+    // protected $fillable = [
+    //     'hotel_id',
+    //     'guest_name',
+    //     'guest_email',
+    //     'guest_phone',
+    //     'check_in',
+    //     'check_out',
+    //     'status',
+    //     'total_amount',
+    //     'paid_amount',
+    //     'booking_reference',
+    // ];
+    protected $guarded = [];
 
     protected $casts = [
         'check_in' => 'date',
