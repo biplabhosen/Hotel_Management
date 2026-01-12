@@ -23,8 +23,11 @@ class BookingController extends Controller
         $rooms = Room::with('roomType')
             ->where('hotel_id', $hotelId)
             ->get();
-        // $roomTypes = RoomType::where('hotel_id', $hotelId)->get();
-        return view("pages.erp.bookings.create", compact('rooms'));
+        $roomTypes = RoomType::where('hotel_id', $hotelId)
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
+        return view("pages.erp.bookings.create", compact('rooms', 'roomTypes'));
     }
 
     public function availableRooms(Request $request)
@@ -41,8 +44,8 @@ class BookingController extends Controller
             ->where('hotel_id', $hotelId)
             ->where('room_type_id', $request->room_type_id)
             ->whereDoesntHave('bookingRooms', function ($q) use ($request) {
-                $q->where(function ($q) use ($request) {
-                    $q->whereBetween('check_in', [$request->check_in, $request->check_out])
+                $q->where(function ($overlap) use ($request) {
+                    $overlap->whereBetween('check_in', [$request->check_in, $request->check_out])
                         ->orWhereBetween('check_out', [$request->check_in, $request->check_out])
                         ->orWhere(function ($q) use ($request) {
                             $q->where('check_in', '<=', $request->check_in)
@@ -54,6 +57,7 @@ class BookingController extends Controller
 
         return response()->json($rooms);
     }
+
 
 
     public function store(Request $request)

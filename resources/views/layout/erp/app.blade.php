@@ -29,7 +29,7 @@
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="{{asset('assets')}}/css/admin.css">
-
+    @yield('css')
 </head>
 
 <body>
@@ -94,6 +94,7 @@
     <!-- Custom JS -->
     <script src="{{asset('assets')}}/js/admin.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
 
-<script src="{{asset('assets')}}/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="8516a8624507c09eab6f2a7a-|49" defer></script></body>
-
+    <script src="{{asset('assets')}}/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="8516a8624507c09eab6f2a7a-|49" defer></script></body>
+    @yield('js')
+</body>
 </html>

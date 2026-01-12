@@ -45,8 +45,8 @@ class Room extends Model
     }
 
     // Optional: future booking relation
-    public function bookings()
+    public function bookingRooms()
     {
-        return $this->hasMany(BookingRoom::class);
+        return $this->hasMany(BookingRoom::class, 'room_id');
     }
 }

@@ -24,7 +24,6 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::get('edit', 'edit');
     Route::put('update', 'update');
     Route::get('available', 'availableRooms');
-    // Route::get('occupancy', 'occupency');
 });
 
 Route::middleware('auth')->prefix('room')->controller(RoomController::class)->group(function(){
