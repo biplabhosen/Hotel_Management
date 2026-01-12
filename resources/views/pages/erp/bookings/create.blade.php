@@ -108,11 +108,11 @@
             </select>
             <div class="col-md-4">
                 <label class="form-label">Check In *</label>
-                <input type="date" id="check_in" class="form-control" required>
+                <input type="date" id="check_in" name="check_in" class="form-control" required>
             </div>
             <div class="col-md-4">
                 <label class="form-label">Check Out *</label>
-                <input type="date" id="check_out" class="form-control" required>
+                <input type="date" id="check_out" name="check_out" class="form-control" required>
             </div>
         </div>
         {{-- <div id="available_rooms_section" class="mb-3" style="display: none;">
@@ -120,15 +120,29 @@
             <div id="available-rooms" class="row g-3"></div>
                 <!-- Available rooms will be displayed here -->
         </div> --}}
-        <div id="available-rooms" class="row mt-3"></div>
-            <div class="text-end">
-                <button type="submit" class="btn btn-primary">
-                    Create Booking
-                </button>
+        {{-- <div id="available-rooms" class="row mt-3"></div> --}}
+        <div id="rooms-section" class="mt-3">
+            <div id="loading-spinner" class="text-center d-none">
+                <div class="spinner-border" role="status"></div>
+                <p class="mt-2">Checking availability...</p>
             </div>
+
+            <div id="no-rooms" class="alert alert-warning d-none">
+                No rooms available for the selected dates.
+            </div>
+
+            <div id="available-rooms" class="row"></div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">
+                Create Booking
+            </button>
+        </div>
 
     </form>
 @endsection
+print_r($request->all())
 @section('js')
     {{-- <script>
         $(document).ready(function() {
@@ -197,37 +211,54 @@
         });
     </script> --}}
     <script>
-function loadAvailableRooms() {
-    let roomType = document.getElementById('room_type_id').value;
-    let checkIn  = document.getElementById('check_in').value;
-    let checkOut = document.getElementById('check_out').value;
+        function loadAvailableRooms() {
+            const roomType = document.getElementById('room_type_id').value;
+            const checkIn = document.getElementById('check_in').value;
+            const checkOut = document.getElementById('check_out').value;
 
-    if (!roomType || !checkIn || !checkOut) return;
+            if (!roomType || !checkIn || !checkOut) return;
 
-    fetch(`/booking/available?room_type_id=${roomType}&check_in=${checkIn}&check_out=${checkOut}`)
-        .then(res => res.json())
-        .then(data => {
-            // console.log(data);
+            const spinner = document.getElementById('loading-spinner');
+            const noRooms = document.getElementById('no-rooms');
+            const container = document.getElementById('available-rooms');
 
-            let html = '';
-            data.forEach(data => {
-                html += `
-                    <div class="col-md-3">
-                        <label class="card p-3 cursor-pointer">
-                            <input type="checkbox" name="rooms[]" value="${data.id}">
-                            <strong>Room ${data.room_number}</strong><br>
-                            <small>${data.room_type.name}</small>
+            spinner.classList.remove('d-none');
+            noRooms.classList.add('d-none');
+            container.innerHTML = '';
+
+            fetch(`/booking/available?room_type_id=${roomType}&check_in=${checkIn}&check_out=${checkOut}`)
+                .then(res => res.json())
+                .then(rooms => {
+                    spinner.classList.add('d-none');
+
+                    if (rooms.length === 0) {
+                        noRooms.classList.remove('d-none');
+                        return;
+                    }
+
+                    let html = '';
+                    rooms.forEach(room => {
+                        html += `
+                    <div class="col-md-3 mb-3">
+                        <label class="card p-3 h-100 cursor-pointer">
+                            <input type="checkbox" name="rooms[]" value="${room.id}">
+                            <strong>Room ${room.room_number}</strong><br>
+                            <small>${room.room_type.name}</small>
                         </label>
                     </div>
                 `;
-            });
-            document.getElementById('available-rooms').innerHTML = html;
+                    });
+
+                    container.innerHTML = html;
+                })
+                .catch(() => {
+                    spinner.classList.add('d-none');
+                    alert('Failed to load rooms');
+                });
+        }
+
+        ['room_type_id', 'check_in', 'check_out'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', loadAvailableRooms);
         });
-}
-
-document.getElementById('room_type_id').addEventListener('change', loadAvailableRooms);
-document.getElementById('check_in').addEventListener('change', loadAvailableRooms);
-document.getElementById('check_out').addEventListener('change', loadAvailableRooms);
-</script>
-
+    </script>
 @endsection

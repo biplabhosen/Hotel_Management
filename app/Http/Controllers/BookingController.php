@@ -72,9 +72,13 @@ class BookingController extends Controller
             'total_guests' => 'required|integer|min:1',
 
             'rooms' => 'required|array|min:1',
-            'rooms.*.room_id' => 'required|exists:rooms,id',
-            'rooms.*.check_in' => 'required|date',
-            'rooms.*.check_out' => 'required|date|after:rooms.*.check_in',
+            // 'rooms.*.room_id' => 'required|exists:rooms,id',
+            // 'rooms.*.check_in' => 'required|date',
+            // 'rooms.*.check_out' => 'required|date|after:rooms.*.check_in',
+            'rooms.*' => 'exists:rooms,id',
+
+            'check_in' => 'required|date',
+            'check_out' => 'required|date|after:check_in',
         ]);
 
         DB::beginTransaction();
@@ -114,16 +118,46 @@ class BookingController extends Controller
         | 3️⃣ Loop rooms and check availability
         |--------------------------------------------------------------------------
         */
-            foreach ($request->rooms as $item) {
+            // foreach ($request->rooms as $item) {
+
+            //     $room = Room::with('roomType')
+            //         ->where('hotel_id', $hotelId)
+            //         ->findOrFail($item['room_id']);
+
+            //     // ❌ Availability check (CRITICAL)
+            //     $isBooked = BookingRoom::where('room_id', $room->id)
+            //         ->where('check_in', '<', $item['check_out'])
+            //         ->where('check_out', '>', $item['check_in'])
+            //         ->exists();
+
+            //     if ($isBooked) {
+            //         throw new \Exception(
+            //             "Room {$room->room_number} is not available for selected dates."
+            //         );
+            //     }
+
+            //     /*
+            // |--------------------------------------------------------------------------
+            // | 4️⃣ Freeze price and insert booking_rooms
+            // |--------------------------------------------------------------------------
+            // */
+            //     BookingRoom::create([
+            //         'booking_id' => $booking->id,
+            //         'room_id' => $room->id,
+            //         'price_per_night' => $room->roomType->price_per_night,
+            //         'check_in' => $item['check_in'],
+            //         'check_out' => $item['check_out'],
+            //     ]);
+
+            foreach ($request->rooms as $roomId) {
 
                 $room = Room::with('roomType')
                     ->where('hotel_id', $hotelId)
-                    ->findOrFail($item['room_id']);
+                    ->findOrFail($roomId);
 
-                // ❌ Availability check (CRITICAL)
                 $isBooked = BookingRoom::where('room_id', $room->id)
-                    ->where('check_in', '<', $item['check_out'])
-                    ->where('check_out', '>', $item['check_in'])
+                    ->where('check_in', '<', $request->check_out)
+                    ->where('check_out', '>', $request->check_in)
                     ->exists();
 
                 if ($isBooked) {
@@ -132,20 +166,13 @@ class BookingController extends Controller
                     );
                 }
 
-                /*
-            |--------------------------------------------------------------------------
-            | 4️⃣ Freeze price and insert booking_rooms
-            |--------------------------------------------------------------------------
-            */
                 BookingRoom::create([
                     'booking_id' => $booking->id,
                     'room_id' => $room->id,
                     'price_per_night' => $room->roomType->price_per_night,
-                    'check_in' => $item['check_in'],
-                    'check_out' => $item['check_out'],
+                    'check_in' => $request->check_in,
+                    'check_out' => $request->check_out,
                 ]);
-
-                $room->update(['status' => 'booked']);
             }
 
             DB::commit();
@@ -161,6 +188,32 @@ class BookingController extends Controller
                 ->back()
                 ->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    public function checkIn($id)
+    {
+        $booking = Booking::where('hotel_id', auth()->user()->hotel_id)
+            ->where('status', 'reserved')
+            ->findOrFail($id);
+
+        if ($booking->check_in !== now()->toDateString()) {
+            abort(403, 'Check-in allowed only on arrival date');
+        }
+
+        $booking->update(['status' => 'checked_in']);
+
+        return back()->with('success', 'Guest checked in successfully.');
+    }
+
+    public function checkOut($id)
+    {
+        $booking = Booking::where('hotel_id', auth()->user()->hotel_id)
+            ->where('status', 'checked_in')
+            ->findOrFail($id);
+
+        $booking->update(['status' => 'checked_out']);
+
+        return back()->with('success', 'Guest checked out successfully.');
     }
 
 
