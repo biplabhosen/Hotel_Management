@@ -53,7 +53,7 @@
                 <tbody>
                     @forelse ($bookings as $booking)
                         <tr>
-                            <td>#{{ $booking->id }}</td>
+                            <td>{{ $booking->id }}</td>
                             <td>
                                 <div><strong>{{ $booking->guest->full_name ?? '—' }}</strong></div>
                                 <small class="text-muted">{{ $booking->guest->phone ?? '' }} · {{ $booking->guest->email ?? '' }}</small>

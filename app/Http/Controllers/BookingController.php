@@ -272,13 +272,45 @@ class BookingController extends Controller
             return back()->withErrors('Only reserved bookings can be checked in.');
         }
 
-        // Arrival date is the earliest check_in among booking rooms
-        $arrival = $booking->bookingRooms()->min('check_in');
+        // Get all booking rooms for this booking
+        $bookingRooms = $booking->bookingRooms()->get();
 
-        if ($arrival !== now()->toDateString()) {
-            return back()->withErrors('Check-in allowed only on arrival date.');
+        if ($bookingRooms->isEmpty()) {
+            return back()->withErrors('No rooms assigned to this booking.');
         }
 
+        // Check if any room's check-in date is today
+        $hasCheckInToday = $bookingRooms->where('check_in', now()->toDateString())->isNotEmpty();
+
+        if (!$hasCheckInToday) {
+            $minDate = $bookingRooms->min('check_in');
+            return back()->withErrors('Check-in allowed only on arrival date (' . $minDate . '). Today is ' . now()->toDateString());
+        }
+
+        // Check if advance payment is done (50% minimum)
+        $total = 0;
+        foreach ($bookingRooms as $br) {
+            $checkIn = Carbon::parse($br->check_in);
+            $checkOut = Carbon::parse($br->check_out);
+            $nights = max(1, $checkIn->diffInDays($checkOut));
+            $total += $nights * (float)$br->price_per_night;
+        }
+
+        $paid = DB::table('payments')
+            ->where('booking_id', $booking->id)
+            ->where('status', 'paid')
+            ->where('type', '!=', 'refund')
+            ->sum('amount');
+
+        $advanceRequired = $total * 0.5;
+        if ($paid < $advanceRequired) {
+            return back()->withErrors("Minimum advance (50%) of Rs. {$advanceRequired} required. Paid: Rs. {$paid}");
+        }
+
+        // Update all rooms with today's check-in timestamp
+        $booking->bookingRooms()->update(['checked_in_at' => now()]);
+
+        // Update booking status
         $booking->update(['status' => 'checked_in']);
 
         return back()->with('success', 'Guest checked in successfully.');
@@ -292,13 +324,45 @@ class BookingController extends Controller
             return back()->withErrors('Only checked-in bookings can be checked out.');
         }
 
-        // Departure date is the latest check_out among booking rooms
-        $departure = $booking->bookingRooms()->max('check_out');
+        // Get all booking rooms for this booking
+        $bookingRooms = $booking->bookingRooms()->get();
 
-        if ($departure !== now()->toDateString()) {
-            return back()->withErrors('Check-out allowed only on departure date.');
+        if ($bookingRooms->isEmpty()) {
+            return back()->withErrors('No rooms assigned to this booking.');
         }
 
+        // Check if any room's check-out date is today
+        $hasCheckOutToday = $bookingRooms->where('check_out', now()->toDateString())->isNotEmpty();
+
+        if (!$hasCheckOutToday) {
+            $maxDate = $bookingRooms->max('check_out');
+            return back()->withErrors('Check-out allowed only on departure date (' . $maxDate . '). Today is ' . now()->toDateString());
+        }
+
+        // Check if full payment is done
+        $total = 0;
+        foreach ($bookingRooms as $br) {
+            $checkIn = Carbon::parse($br->check_in);
+            $checkOut = Carbon::parse($br->check_out);
+            $nights = max(1, $checkIn->diffInDays($checkOut));
+            $total += $nights * (float)$br->price_per_night;
+        }
+
+        $paid = DB::table('payments')
+            ->where('booking_id', $booking->id)
+            ->where('status', 'paid')
+            ->where('type', '!=', 'refund')
+            ->sum('amount');
+
+        if ($paid < $total) {
+            $due = $total - $paid;
+            return back()->withErrors("Outstanding balance: Rs. {$due}. Please settle before check-out.");
+        }
+
+        // Update all rooms with today's check-out timestamp
+        $booking->bookingRooms()->update(['checked_out_at' => now()]);
+
+        // Update booking status
         $booking->update(['status' => 'checked_out']);
 
         return back()->with('success', 'Guest checked out successfully.');

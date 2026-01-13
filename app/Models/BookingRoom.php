@@ -17,12 +17,16 @@ class BookingRoom extends Model
         'price_per_night',
         'check_in',
         'check_out',
+        'checked_in_at',
+        'checked_out_at',
     ];
 
     protected $casts = [
         'price_per_night' => 'decimal:2',
         'check_in' => 'date',
         'check_out' => 'date',
+        'checked_in_at' => 'datetime',
+        'checked_out_at' => 'datetime',
     ];
 
     /**

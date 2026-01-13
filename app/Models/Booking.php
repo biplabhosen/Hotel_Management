@@ -63,6 +63,11 @@ class Booking extends Model
     {
         return $this->belongsTo(Guest::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
     
     /**
      * Helpers

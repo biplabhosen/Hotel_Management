@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,18 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::get('available', 'availableRooms');
 });
 
+Route::middleware('auth')->prefix('payment')->controller(PaymentController::class)->group(function(){
+
+    Route::get('/', 'index')->name('payment.index');
+    Route::get('booking/{booking}', 'show')->name('booking.show');
+    Route::get('booking/{booking}/create', 'create')->name('payment.create');
+    Route::post('booking/{booking}', 'store')->name('payment.store');
+    Route::get('{payment}/edit', 'edit')->name('payment.edit');
+    Route::put('{payment}', 'update')->name('payment.update');
+    Route::delete('{payment}', 'destroy')->name('payment.destroy');
+    Route::post('{payment}/refund', 'refund')->name('payment.refund');
+});
+
 Route::middleware('auth')->prefix('room')->controller(RoomController::class)->group(function(){
 
     Route::get('/', 'index');
@@ -37,3 +50,4 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
     Route::put('update', 'update');
     Route::get('occupancy', 'occupency');
 });
+
