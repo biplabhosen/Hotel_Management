@@ -9,12 +9,86 @@ use App\Models\Room;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view("pages.erp.bookings.index");
+        $hotelId = auth()->user()->hotel_id;
+
+        $query = Booking::with(['guest', 'bookingRooms.room.roomType'])
+            ->where('hotel_id', $hotelId);
+
+        // Filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->whereHas('guest', function ($qb) use ($q) {
+                $qb->where('full_name', 'like', "%{$q}%")
+                    ->orWhere('phone', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%");
+            });
+        }
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $from = $request->from;
+            $to = $request->to;
+            $query->whereHas('bookingRooms', function ($qb) use ($from, $to) {
+                $qb->where(function ($overlap) use ($from, $to) {
+                    $overlap->whereBetween('check_in', [$from, $to])
+                        ->orWhereBetween('check_out', [$from, $to])
+                        ->orWhere(function ($q2) use ($from, $to) {
+                            $q2->where('check_in', '<=', $from)
+                                ->where('check_out', '>=', $to);
+                        });
+                });
+            });
+        }
+
+        $bookings = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+
+        // Compute totals and paid amounts per booking
+        $bookings->getCollection()->transform(function ($booking) {
+            $total = 0;
+            foreach ($booking->bookingRooms as $br) {
+                $checkIn = Carbon::parse($br->check_in);
+                $checkOut = Carbon::parse($br->check_out);
+                $nights = max(1, $checkIn->diffInDays($checkOut));
+                $total += $nights * (float) $br->price_per_night;
+            }
+
+            $paid = DB::table('payments')
+                ->where('booking_id', $booking->id)
+                ->where('status', 'paid')
+                ->sum('amount');
+
+            $booking->computed_total = number_format($total, 2, '.', '');
+            $booking->paid_amount = number_format((float) $paid, 2, '.', '');
+            $booking->due_amount = number_format(max(0, $total - (float) $paid), 2, '.', '');
+
+            // handy min/max dates for display and rules (use plain date strings to avoid Optional wrapping)
+            $min = $booking->bookingRooms->min('check_in');
+            $max = $booking->bookingRooms->max('check_out');
+            $booking->arrival = $min ? Carbon::parse($min)->toDateString() : null;
+            $booking->departure = $max ? Carbon::parse($max)->toDateString() : null;
+
+            return $booking;
+        });
+
+        // status counts
+        $counts = Booking::where('hotel_id', $hotelId)
+            ->select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $statuses = ['reserved', 'checked_in', 'checked_out', 'cancelled'];
+
+        return view('pages.erp.bookings.index', compact('bookings', 'statuses', 'counts'));
     }
 
     public function create()
@@ -198,7 +272,10 @@ class BookingController extends Controller
             return back()->withErrors('Only reserved bookings can be checked in.');
         }
 
-        if ($booking->check_in !== now()->toDateString()) {
+        // Arrival date is the earliest check_in among booking rooms
+        $arrival = $booking->bookingRooms()->min('check_in');
+
+        if ($arrival !== now()->toDateString()) {
             return back()->withErrors('Check-in allowed only on arrival date.');
         }
 
@@ -213,6 +290,13 @@ class BookingController extends Controller
 
         if ($booking->status !== 'checked_in') {
             return back()->withErrors('Only checked-in bookings can be checked out.');
+        }
+
+        // Departure date is the latest check_out among booking rooms
+        $departure = $booking->bookingRooms()->max('check_out');
+
+        if ($departure !== now()->toDateString()) {
+            return back()->withErrors('Check-out allowed only on departure date.');
         }
 
         $booking->update(['status' => 'checked_out']);

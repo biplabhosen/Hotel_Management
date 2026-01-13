@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,7 +18,6 @@ class Room extends Model
         'room_type_id',
         'room_number',
         'floor',
-        'status',
     ];
 
 
@@ -27,6 +27,38 @@ class Room extends Model
     protected $casts = [
         'floor' => 'integer',
     ];
+
+    public function getStatusAttribute(): string
+    {
+        if (! $this->relationLoaded('bookingRooms')) {
+            $this->load('bookingRooms.booking');
+        }
+        $today = Carbon::today();
+
+        // OCCUPIED
+        if ($this->bookingRooms->contains(
+            fn($br) =>
+            $br->check_in <= $today &&
+                $br->check_out > $today &&
+                $br->booking?->status === 'checked_in'
+        )) {
+            return 'occupied';
+        }
+
+        // BOOKED
+        if ($this->bookingRooms->contains(
+            fn($br) =>
+            $br->check_in <= $today &&
+                $br->check_out > $today &&
+                in_array($br->booking?->status, ['confirmed', 'reserved'])
+        )) {
+            return 'booked';
+        }
+
+        return 'available';
+    }
+
+
 
     /**
      * Relationships

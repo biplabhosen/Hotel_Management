@@ -13,7 +13,12 @@ class RoomController extends Controller
 {
     public function index()
     {
-        return view("pages.erp.rooms.index");
+        $rooms = Room::with([
+            'bookingRooms.booking' => fn($q) =>
+            $q->whereIn('status', ['reserved', 'confirmed', 'checked_in'])
+        ])->get();
+
+        return view("pages.erp.rooms.index" , compact('rooms'));
     }
 
     public function create()

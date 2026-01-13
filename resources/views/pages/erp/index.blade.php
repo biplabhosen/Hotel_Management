@@ -1,7 +1,7 @@
 @extends('layout.erp.app')
 
 @section('content')
-    <div class="content">
+
         <div class="row">
             <div class="col-lg-3 col-sm-6 col-12 d-flex widget-path widget-service">
                 <div class="card">
@@ -761,5 +761,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 @endsection

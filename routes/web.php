@@ -21,6 +21,8 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::get('/', 'index');
     Route::get('create', 'create');
     Route::post('store', 'store');
+    Route::post('check-in/{booking}', 'checkIn');
+    Route::post('check-out/{booking}', 'checkOut');
     Route::get('edit', 'edit');
     Route::put('update', 'update');
     Route::get('available', 'availableRooms');

@@ -59,6 +59,11 @@ class Booking extends Model
         ]);
     }
 
+    public function guest()
+    {
+        return $this->belongsTo(Guest::class);
+    }
+    
     /**
      * Helpers
      */

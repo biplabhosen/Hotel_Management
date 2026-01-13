@@ -44,7 +44,9 @@
         <!-- /Sidebar -->
 
         <div class="page-wrapper">
+            <div class="content">
                 @yield('content')
+            </div>
         </div>
     </div>
 

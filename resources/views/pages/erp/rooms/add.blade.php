@@ -79,7 +79,7 @@
             font-weight: 500;
         }
     </style>
-    <div class="container-fluid p-4">
+    {{-- <div class="container-fluid p-4"> --}}
         <div class="card-form">
 
             @if (session('success'))
