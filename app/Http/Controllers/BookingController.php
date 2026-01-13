@@ -190,14 +190,16 @@ class BookingController extends Controller
         }
     }
 
-    public function checkIn($id)
+    public function checkIn(Booking $booking)
     {
-        $booking = Booking::where('hotel_id', auth()->user()->hotel_id)
-            ->where('status', 'reserved')
-            ->findOrFail($id);
+        $this->authorizeBooking($booking);
+
+        if ($booking->status !== 'reserved') {
+            return back()->withErrors('Only reserved bookings can be checked in.');
+        }
 
         if ($booking->check_in !== now()->toDateString()) {
-            abort(403, 'Check-in allowed only on arrival date');
+            return back()->withErrors('Check-in allowed only on arrival date.');
         }
 
         $booking->update(['status' => 'checked_in']);
@@ -205,16 +207,26 @@ class BookingController extends Controller
         return back()->with('success', 'Guest checked in successfully.');
     }
 
-    public function checkOut($id)
+    public function checkOut(Booking $booking)
     {
-        $booking = Booking::where('hotel_id', auth()->user()->hotel_id)
-            ->where('status', 'checked_in')
-            ->findOrFail($id);
+        $this->authorizeBooking($booking);
+
+        if ($booking->status !== 'checked_in') {
+            return back()->withErrors('Only checked-in bookings can be checked out.');
+        }
 
         $booking->update(['status' => 'checked_out']);
 
         return back()->with('success', 'Guest checked out successfully.');
     }
+
+    protected function authorizeBooking(Booking $booking)
+    {
+        if ($booking->hotel_id !== auth()->user()->hotel_id) {
+            abort(403);
+        }
+    }
+
 
 
     // public function occupency(){
