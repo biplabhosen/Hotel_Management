@@ -89,7 +89,7 @@ class PaymentController extends Controller
 
         // Validate payment amount
         if ((float)$validated['amount'] > $dueAmount) {
-            return back()->withErrors(['amount' => "Payment amount cannot exceed due amount of Rs. {$dueAmount}"]);
+            return back()->withErrors(['amount' => "Payment amount cannot exceed due amount of BDT {$dueAmount}"]);
         }
 
         DB::beginTransaction();
@@ -109,19 +109,13 @@ class PaymentController extends Controller
                 'payment_date' => now()->toDateString(),
             ]);
 
-            // Update booking paid amount
-            $newPaidAmount = $paidAmount + (float)$validated['amount'];
-            if ($newPaidAmount >= $total) {
-                $booking->update(['paid_amount' => $total]);
-            } else {
-                $booking->update(['paid_amount' => $newPaidAmount]);
-            }
+            // Payment recorded. Booking paid amount is computed dynamically from payments.
 
             DB::commit();
 
             return redirect()
                 ->route('booking.show', $booking)
-                ->with('success', "Payment of Rs. {$validated['amount']} recorded successfully.");
+                ->with('success', "Payment of BDT {$validated['amount']} recorded successfully.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to record payment: ' . $e->getMessage()]);
@@ -188,8 +182,7 @@ class PaymentController extends Controller
                     ->where('id', '!=', $payment->id)
                     ->sum('amount');
 
-                $newPaidAmount = $paidAmount + $validated['amount'];
-                $booking->update(['paid_amount' => min($newPaidAmount, $total)]);
+                // Booking paid amount is calculated dynamically from payments; no stored update here.
             }
 
             DB::commit();
@@ -229,11 +222,7 @@ class PaymentController extends Controller
                 $total += $nights * (float)$br->price_per_night;
             }
 
-            $paidAmount = $booking->payments()
-                ->where('status', 'paid')
-                ->sum('amount');
-
-            $booking->update(['paid_amount' => $paidAmount]);
+            // Booking paid amount is computed dynamically from payments; no stored update required.
 
             DB::commit();
 
@@ -303,8 +292,7 @@ class PaymentController extends Controller
                 ->where('type', 'refund')
                 ->sum('amount');
 
-            $finalPaid = max(0, $paidAmount - $refundAmount);
-            $booking->update(['paid_amount' => $finalPaid]);
+            // Booking paid amount is computed dynamically from payments; no stored update required.
 
             DB::commit();
 

@@ -5,7 +5,21 @@
     <h3 class="mb-0">Bookings</h3>
     <a href="{{ url('booking/create') }}" class="btn btn-primary">+ New Booking</a>
 </div>
-
+@if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 <div class="card mb-3">
     <div class="card-body">
         <form method="GET" class="row g-2">
@@ -56,7 +70,7 @@
                             <td>{{ $booking->id }}</td>
                             <td>
                                 <div><strong>{{ $booking->guest->full_name ?? '—' }}</strong></div>
-                                <small class="text-muted">{{ $booking->guest->phone ?? '' }} · {{ $booking->guest->email ?? '' }}</small>
+                                <small class="text-muted">{{ $booking->guest->phone ?? '' }} <br> {{ $booking->guest->email ?? '' }}</small>
                             </td>
                             <td style="min-width:180px">
                                 @foreach ($booking->bookingRooms as $br)
@@ -107,7 +121,7 @@
                                     <a href="#" class="btn btn-sm btn-outline-primary">View</a>
 
                                     @if($booking->status === 'reserved' && $booking->arrival === now()->toDateString())
-                                        <form method="POST" action="{{ url('booking/check-in/'.$booking->id) }}" onsubmit="return confirm('Confirm check-in for this booking?')">
+                                        <form method="POST" action="{{ url('booking/check-in',$booking->id) }}" onsubmit="return confirm('Confirm check-in for this booking?')">
                                             @csrf
                                             <button class="btn btn-sm btn-success" type="submit">Check In</button>
                                         </form>

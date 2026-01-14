@@ -26,8 +26,6 @@ class Booking extends Model
     protected $casts = [
         'check_in' => 'date',
         'check_out' => 'date',
-        'total_amount' => 'decimal:2',
-        'paid_amount' => 'decimal:2',
     ];
 
     /**
@@ -68,13 +66,40 @@ class Booking extends Model
     {
         return $this->hasMany(Payment::class);
     }
-    
+
     /**
      * Helpers
      */
 
+    public function getTotalAmountAttribute()
+    {
+        $total = 0;
+        foreach ($this->bookingRooms as $br) {
+            $checkIn = \Carbon\Carbon::parse($br->check_in);
+            $checkOut = \Carbon\Carbon::parse($br->check_out);
+            $nights = max(1, $checkIn->diffInDays($checkOut));
+            $total += $nights * (float) $br->price_per_night;
+        }
+
+        return round($total, 2);
+    }
+
+    public function getPaidAmountAttribute()
+    {
+        $paid = $this->payments()
+            ->where('status', 'paid')
+            ->where('type', '!=', 'refund')
+            ->sum('amount');
+
+        $refunds = $this->payments()
+            ->where('type', 'refund')
+            ->sum('amount');
+
+        return max(0, round($paid - $refunds, 2));
+    }
+
     public function getDueAmountAttribute()
     {
-        return $this->total_amount - $this->paid_amount;
+        return round($this->total_amount - $this->paid_amount, 2);
     }
 }

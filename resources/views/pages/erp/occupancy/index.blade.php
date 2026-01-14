@@ -302,6 +302,10 @@
                         <!-- Amenities -->
                         <div class="amenities mt-2 d-flex gap-2">
                             @foreach ($room->roomType->amenities as $amenity)
+                            @php
+
+                                // print_r($room->roomType->amenities)
+                            @endphp
                                 <i class="bi bi-{{ $amenity->icon }}" data-bs-toggle="tooltip"
                                     title="{{ $amenity->name }}"></i>
                             @endforeach
