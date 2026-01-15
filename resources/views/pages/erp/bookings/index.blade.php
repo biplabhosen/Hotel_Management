@@ -135,6 +135,7 @@
                                     @endif
 
                                     <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                    <button class="btn btn-sm btn-primary btn-add-payment" data-booking-id="{{ $booking->id }}" data-due="{{ $booking->computed_due_amount ?? '0.00' }}" data-guest="{{ $booking->guest->full_name ?? '' }}">Add Payment</button>
                                 </div>
                             </td>
                         </tr>
@@ -157,6 +158,111 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="paymentForm" method="POST" action="">
+                @csrf
+                <input type="hidden" name="booking_id" id="pm_booking_id" value="">
+                <div class="modal-header">
+                    <h5 class="modal-title">Record Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Booking</label>
+                        <div id="pm_booking_info" class="fw-bold">-</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Amount (BDT)</label>
+                        <input id="pm_amount" name="amount" type="number" step="0.01" min="0.01" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Method</label>
+                        <select name="method" class="form-select">
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="mobile_banking">Mobile Banking</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select name="type" class="form-select">
+                            <option value="advance">Advance</option>
+                            <option value="balance" selected>Balance</option>
+                            <option value="refund">Refund</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Reference (optional)</label>
+                        <input name="reference" type="text" class="form-control">
+                    </div>
+
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Record Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var modalEl = document.getElementById('paymentModal');
+        if (!modalEl) return;
+        var paymentModal = new bootstrap.Modal(modalEl);
+
+        document.querySelectorAll('.btn-add-payment').forEach(function(btn){
+            btn.addEventListener('click', function(e){
+                e.preventDefault();
+                var id = this.dataset.bookingId;
+                var due = this.dataset.due || '0.00';
+                var guest = this.dataset.guest || '';
+
+                var form = document.getElementById('paymentForm');
+                form.action = '/payment/booking/' + id;
+                document.getElementById('pm_booking_id').value = id;
+                document.getElementById('pm_booking_info').textContent = 'Booking #' + id + (guest ? (' - ' + guest) : '');
+                document.getElementById('pm_amount').value = parseFloat(due).toFixed(2);
+
+                paymentModal.show();
+            });
+        });
+
+        // If validation failed and old booking_id exists, reopen modal with old values
+        @if($errors->any() && old('booking_id'))
+            var oldId = '{{ old('booking_id') }}';
+            var form = document.getElementById('paymentForm');
+            form.action = '/payment/booking/' + oldId;
+            document.getElementById('pm_booking_id').value = oldId;
+            document.getElementById('pm_booking_info').textContent = 'Booking #' + oldId;
+            document.getElementById('pm_amount').value = '{{ old('amount') ?? '' }}';
+            paymentModal.show();
+        @endif
+    });
+</script>
+@endsection
 
 @endsection
 

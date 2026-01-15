@@ -70,6 +70,10 @@ class BookingController extends Controller
             $booking->computed_paid_amount = number_format((float) $paid, 2, '.', '');
             $booking->computed_due_amount = number_format(max(0, $total - (float) $paid), 2, '.', '');
 
+            // also expose convenient fields used by views
+            $booking->paid_amount = $booking->computed_paid_amount;
+            $booking->due_amount = $booking->computed_due_amount;
+
             // handy min/max dates for display and rules (use plain date strings to avoid Optional wrapping)
             $min = $booking->bookingRooms->min('check_in');
             $max = $booking->bookingRooms->max('check_out');

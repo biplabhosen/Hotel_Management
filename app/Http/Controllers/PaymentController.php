@@ -114,7 +114,7 @@ class PaymentController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('booking.show', $booking)
+                ->back()
                 ->with('success', "Payment of BDT {$validated['amount']} recorded successfully.");
         } catch (\Exception $e) {
             DB::rollBack();
