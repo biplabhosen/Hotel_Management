@@ -10,6 +10,7 @@ use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\User;
 
 class BookingController extends Controller
 {
@@ -73,6 +74,11 @@ class BookingController extends Controller
             // also expose convenient fields used by views
             $booking->paid_amount = $booking->computed_paid_amount;
             $booking->due_amount = $booking->computed_due_amount;
+
+            // payment summary
+            $booking->payments_count = $booking->payments()->count();
+            $lastPayment = $booking->payments()->orderBy('created_at', 'desc')->value('created_at');
+            $booking->last_payment_date = $lastPayment ? Carbon::parse($lastPayment)->toDateString() : null;
 
             // handy min/max dates for display and rules (use plain date strings to avoid Optional wrapping)
             $min = $booking->bookingRooms->min('check_in');
@@ -380,11 +386,46 @@ class BookingController extends Controller
         return back()->with('success', 'Guest checked out successfully.');
     }
 
+    public function canAddPayment(User $user, Booking $booking): bool
+    {
+        $this->authorizeBooking($booking);
+
+        if ($booking->due_amount <= 0) {
+            return false;
+        }
+
+        if (in_array($booking->status, ['cancelled', 'no_show'])) {
+            return false;
+        }
+
+        if ($booking->status === 'checked_out') {
+            return $user->hasRole('manager');
+        }
+
+        return true; // reserved or checked-in with due
+    }
+
     protected function authorizeBooking(Booking $booking)
     {
         if ($booking->hotel_id !== auth()->user()->hotel_id) {
             abort(403);
         }
+    }
+
+    /**
+     * Cancel a booking (set status to cancelled)
+     */
+    public function cancel(Booking $booking)
+    {
+        $this->authorizeBooking($booking);
+
+        if (in_array($booking->status, ['checked_out', 'cancelled'])) {
+            return back()->withErrors('Cannot cancel a booking that is already checked-out or cancelled.');
+        }
+
+        $booking->update(['status' => 'cancelled']);
+
+        return back()->with('success', 'Booking cancelled successfully.');
     }
 
 

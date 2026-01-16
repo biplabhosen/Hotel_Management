@@ -24,6 +24,7 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::post('store', 'store');
     Route::post('check-in/{booking}', 'checkIn');
     Route::post('check-out/{booking}', 'checkOut');
+    Route::post('cancel/{booking}', 'cancel')->name('booking.cancel');
     Route::get('edit', 'edit');
     Route::put('update', 'update');
     Route::get('available', 'availableRooms');
@@ -35,6 +36,8 @@ Route::middleware('auth')->prefix('payment')->controller(PaymentController::clas
     Route::get('booking/{booking}', 'show')->name('booking.show');
     Route::get('booking/{booking}/create', 'create')->name('payment.create');
     Route::post('booking/{booking}', 'store')->name('payment.store');
+    Route::get('booking/{booking}/invoice', 'invoice')->name('payment.invoice');
+    Route::get('{payment}/receipt', 'receipt')->name('payment.receipt');
     Route::get('{payment}/edit', 'edit')->name('payment.edit');
     Route::put('{payment}', 'update')->name('payment.update');
     Route::delete('{payment}', 'destroy')->name('payment.destroy');

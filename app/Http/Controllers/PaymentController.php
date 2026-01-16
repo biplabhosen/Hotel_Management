@@ -7,6 +7,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\User;
 
 class PaymentController extends Controller
 {
@@ -303,6 +304,36 @@ class PaymentController extends Controller
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to process refund: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Generate a simple invoice view for a booking
+     */
+    public function invoice(Booking $booking)
+    {
+        $this->authorizeBooking($booking);
+
+        $total = 0;
+        foreach ($booking->bookingRooms as $br) {
+            $checkIn = Carbon::parse($br->check_in);
+            $checkOut = Carbon::parse($br->check_out);
+            $nights = max(1, $checkIn->diffInDays($checkOut));
+            $total += $nights * (float)$br->price_per_night;
+        }
+
+        $paidAmount = $booking->payments()->where('status','paid')->sum('amount');
+        $dueAmount = max(0, $total - $paidAmount);
+
+        return view('pages.erp.payments.invoice', compact('booking','total','paidAmount','dueAmount'));
+    }
+
+    /**
+     * Generate a simple receipt for a payment
+     */
+    public function receipt(Payment $payment)
+    {
+        $this->authorizePayment($payment);
+        return view('pages.erp.payments.receipt', compact('payment'));
     }
 
     /**

@@ -59,6 +59,7 @@
                         <th>Rooms</th>
                         <th>Stay</th>
                         <th class="text-end">Amount</th>
+                        <th>Payments</th>
                         <th>Status</th>
                         <th>Created</th>
                         <th class="text-end">Actions</th>
@@ -101,6 +102,35 @@
                                 <small class="text-success">Paid: {{ $booking->paid_amount ?? '0.00' }}</small>
                                 <div><small class="text-danger">Due: {{ $booking->due_amount ?? '0.00' }}</small></div>
                             </td>
+                            <td class="text-center">
+                                @php
+                                    $ps = 'unpaid';
+                                    if((float)($booking->due_amount ?? 0) <= 0){
+                                        $ps = 'paid';
+                                    } elseif((float)($booking->paid_amount ?? 0) > 0 && (float)($booking->due_amount ?? 0) > 0){
+                                        $ps = 'partial';
+                                    }
+                                @endphp
+
+                                <a href="{{ route('booking.show', $booking) }}" class="btn btn-sm btn-outline-info position-relative">
+                                    <span class="fw-bold">Payments</span>
+                                    @if($ps === 'paid')
+                                        <span class="badge bg-success ms-2">Paid</span>
+                                    @elseif($ps === 'partial')
+                                        <span class="badge bg-warning ms-2 text-dark">Partial</span>
+                                    @else
+                                        <span class="badge bg-danger ms-2">Unpaid</span>
+                                    @endif
+
+                                    @if((float)($booking->due_amount ?? 0) > 0)
+                                        <br>
+                                        <small class=" text-danger">Due: {{ $booking->due_amount }}</small>
+                                    @endif
+
+                                    <br>
+                                    <small class="text-muted">{{ $booking->payments_count ?? 0 }} payment(s)</small>
+                                </a>
+                            </td>
                             <td>
                                 @php
                                     $sClass = match($booking->status) {
@@ -117,31 +147,69 @@
                                 <small class="text-muted">{{ $booking->created_at->format('Y-m-d') }}</small>
                             </td>
                             <td class="text-end">
-                                <div class="d-flex justify-content-end gap-2">
-                                    <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                <div class="d-flex justify-content-end gap-2 align-items-center">
+                                    <a href="{{ url('booking/'.$booking->id) }}" class="btn btn-sm btn-outline-primary">View</a>
 
-                                    @if($booking->status === 'reserved' && $booking->arrival === now()->toDateString())
+                                    @php
+                                        // determine visible check-in/out button
+                                        $showCheckIn = ($booking->status === 'reserved' && $booking->arrival === now()->toDateString());
+                                        $showCheckOut = ($booking->status === 'checked_in' && $booking->departure === now()->toDateString());
+
+                                        // add payment rule per spec
+                                        $canAddPayment = false;
+                                        if((float)($booking->due_amount ?? 0) > 0 && !in_array($booking->status, ['cancelled','no_show'])){
+                                            if($booking->status === 'checked_out'){
+                                                $canAddPayment = auth()->user()->hasRole('manager');
+                                            } else {
+                                                $canAddPayment = true;
+                                            }
+                                        }
+                                    @endphp
+
+                                    @if($showCheckIn)
                                         <form method="POST" action="{{ url('booking/check-in',$booking->id) }}" onsubmit="return confirm('Confirm check-in for this booking?')">
                                             @csrf
                                             <button class="btn btn-sm btn-success" type="submit">Check In</button>
                                         </form>
                                     @endif
 
-                                    @if($booking->status === 'checked_in' && $booking->departure === now()->toDateString())
+                                    @if($showCheckOut)
                                         <form method="POST" action="{{ url('booking/check-out/'.$booking->id) }}" onsubmit="return confirm('Confirm check-out for this booking?')">
                                             @csrf
                                             <button class="btn btn-sm btn-warning" type="submit">Check Out</button>
                                         </form>
                                     @endif
 
-                                    <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                    <button class="btn btn-sm btn-primary btn-add-payment" data-booking-id="{{ $booking->id }}" data-due="{{ $booking->computed_due_amount ?? '0.00' }}" data-guest="{{ $booking->guest->full_name ?? '' }}">Add Payment</button>
+                                    <!-- Ellipsis dropdown for secondary actions -->
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">…</button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if($canAddPayment)
+                                                <li>
+                                                    <a href="#" class="dropdown-item btn-add-payment" data-booking-id="{{ $booking->id }}" data-due="{{ $booking->computed_due_amount ?? '0.00' }}" data-guest="{{ $booking->guest->full_name ?? '' }}">Record Payment</a>
+                                                </li>
+                                            @endif
+
+                                            @if($booking->status === 'checked_out')
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('payment.invoice', $booking) }}">Generate Invoice</a>
+                                                </li>
+                                            @endif
+
+                                            <li>
+                                                <form action="{{ route('booking.cancel', $booking) }}" method="POST" onsubmit="return confirm('Cancel booking?')">
+                                                    @csrf
+                                                    <button class="dropdown-item text-danger" type="submit">Cancel Booking</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center p-4">No bookings found.</td>
+                            <td colspan="9" class="text-center p-4">No bookings found.</td>
                         </tr>
                     @endforelse
                 </tbody>

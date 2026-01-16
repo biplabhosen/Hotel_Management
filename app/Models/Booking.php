@@ -102,4 +102,15 @@ class Booking extends Model
     {
         return round($this->total_amount - $this->paid_amount, 2);
     }
+
+    /**
+     * Accessors & Mutators
+     */
+    
+    public function getPaymentStatusAttribute()
+    {
+        if ($this->paid_amount <= 0) return 'unpaid';
+        if ($this->paid_amount < $this->total_amount) return 'partial';
+        return 'paid';
+    }
 }
