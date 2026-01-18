@@ -7,6 +7,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Foundation\Auth\User;
 
 class PaymentController extends Controller
@@ -299,7 +300,7 @@ class PaymentController extends Controller
 
             return redirect()
                 ->back()
-                ->with('success', "Refund of Rs. {$validated['refund_amount']} processed successfully.");
+                ->with('success', "Refund of BDT {$validated['refund_amount']} processed successfully.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to process refund: ' . $e->getMessage()]);
@@ -321,10 +322,32 @@ class PaymentController extends Controller
             $total += $nights * (float)$br->price_per_night;
         }
 
-        $paidAmount = $booking->payments()->where('status','paid')->sum('amount');
+        $paidAmount = $booking->payments()->where('status', 'paid')->sum('amount');
         $dueAmount = max(0, $total - $paidAmount);
 
-        return view('pages.erp.payments.invoice', compact('booking','total','paidAmount','dueAmount'));
+        return view('pages.erp.payments.invoice', compact('booking', 'total', 'paidAmount', 'dueAmount'));
+    }
+
+    public function invoicePdf(Booking $booking)
+    {
+        $this->authorizeBooking($booking);
+
+        $booking->load(['guest', 'bookingRooms.room', 'payments']);
+
+        $pdf = Pdf::loadView(
+            'pages.erp.invoices.pdf',
+            [
+                'booking' => $booking,
+                'hotel' => $booking->hotel,
+                'total' => $booking->total_amount,
+                'paid' => $booking->paid_amount,
+                'due' => $booking->due_amount,
+            ]
+        )->setPaper('a4');
+
+        return $pdf->download(
+            'INV-' . str_pad($booking->id, 6, '0', STR_PAD_LEFT) . '.pdf'
+        );
     }
 
     /**

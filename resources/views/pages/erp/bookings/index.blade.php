@@ -57,12 +57,12 @@
                         <th>#</th>
                         <th>Guest</th>
                         <th>Rooms</th>
-                        <th>Stay</th>
+                        <th class="text-center">Stay</th>
                         <th class="text-end">Amount</th>
-                        <th>Payments</th>
+                        <th class="text-center">Payments</th>
                         <th>Status</th>
-                        <th>Created</th>
-                        <th class="text-end">Actions</th>
+                        {{-- <th>Created</th> --}}
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -143,9 +143,9 @@
                                 @endphp
                                 <span class="{{ $sClass }}">{{ ucfirst(str_replace('_',' ', $booking->status)) }}</span>
                             </td>
-                            <td>
+                            {{-- <td>
                                 <small class="text-muted">{{ $booking->created_at->format('Y-m-d') }}</small>
-                            </td>
+                            </td> --}}
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2 align-items-center">
                                     <a href="{{ url('booking/'.$booking->id) }}" class="btn btn-sm btn-outline-primary">View</a>
@@ -196,12 +196,14 @@
                                                 </li>
                                             @endif
 
+                                            @if ($booking->status === 'reserved')
                                             <li>
                                                 <form action="{{ route('booking.cancel', $booking) }}" method="POST" onsubmit="return confirm('Cancel booking?')">
                                                     @csrf
                                                     <button class="dropdown-item text-danger" type="submit">Cancel Booking</button>
                                                 </form>
                                             </li>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>

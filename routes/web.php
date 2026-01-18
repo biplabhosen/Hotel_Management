@@ -28,6 +28,10 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::get('edit', 'edit');
     Route::put('update', 'update');
     Route::get('available', 'availableRooms');
+    Route::get('calendar', 'calendar')->name('room.calendar');
+    Route::get('calendar/api', 'apiCalendar')->name('room.calendar.api');
+    Route::get('calendar/resources', 'calendarResources')->name('room.calendar.resources');
+
 });
 
 Route::middleware('auth')->prefix('payment')->controller(PaymentController::class)->group(function(){
@@ -36,7 +40,7 @@ Route::middleware('auth')->prefix('payment')->controller(PaymentController::clas
     Route::get('booking/{booking}', 'show')->name('booking.show');
     Route::get('booking/{booking}/create', 'create')->name('payment.create');
     Route::post('booking/{booking}', 'store')->name('payment.store');
-    Route::get('booking/{booking}/invoice', 'invoice')->name('payment.invoice');
+    Route::get('booking/{booking}/invoice', 'invoicePdf')->name('payment.invoice');
     Route::get('{payment}/receipt', 'receipt')->name('payment.receipt');
     Route::get('{payment}/edit', 'edit')->name('payment.edit');
     Route::put('{payment}', 'update')->name('payment.update');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserNotification;
 use App\Models\Booking;
 use App\Models\BookingRoom;
 use App\Models\Guest;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -258,6 +260,7 @@ class BookingController extends Controller
                     'check_out' => $request->check_out,
                 ]);
             }
+            Mail::to($guest->email)->send(new UserNotification($guest));
 
             DB::commit();
 
@@ -440,5 +443,139 @@ class BookingController extends Controller
     // $roomTypes = RoomType::where('hotel_id', $hotelId)->get();
 
     // return view('pages.erp.occupancy.index', compact('rooms', 'roomTypes'));
+    // }
+
+    public function calendar(Request $request)
+    {
+        $hotelId = auth()->user()->hotel_id;
+
+        // Optional: filter month/year
+        $year = $request->get('year', now()->year);
+        $month = $request->get('month', now()->month);
+
+        $startOfMonth = \Carbon\Carbon::create($year, $month, 1)->startOfMonth();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+
+        // Fetch all rooms
+        $rooms = \App\Models\Room::where('hotel_id', $hotelId)
+            ->with(['bookingRooms.booking.guest'])
+            ->get();
+
+        // Build calendar data
+        $calendar = [];
+
+        foreach ($rooms as $room) {
+            $roomData = [
+                'room_number' => $room->room_number,
+                'room_type' => $room->roomType->name ?? null,
+                'occupancy' => [], // date => booking info
+            ];
+
+            // Create all dates for month
+            $dates = [];
+            for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
+                $dates[$date->toDateString()] = null;
+            }
+
+            // Map bookings to dates
+            foreach ($room->bookingRooms as $br) {
+                $booking = $br->booking;
+                $checkIn = \Carbon\Carbon::parse($br->check_in);
+                $checkOut = \Carbon\Carbon::parse($br->check_out)->subDay(); // check_out is exclusive
+                for ($d = $checkIn->copy(); $d->lte($checkOut); $d->addDay()) {
+                    $ds = $d->toDateString();
+                    if (isset($dates[$ds])) {
+                        $dates[$ds] = [
+                            'booking_id' => $booking->id,
+                            'guest_name' => $booking->guest->full_name ?? null,
+                            'status' => $booking->status,
+                        ];
+                    }
+                }
+            }
+
+            $roomData['occupancy'] = $dates;
+            $calendar[] = $roomData;
+        }
+
+        return view('pages.erp.rooms.calendar', compact('calendar', 'year', 'month', 'startOfMonth', 'endOfMonth'));
+    }
+
+    public function apiCalendar(Request $request)
+    {
+        $hotelId = auth()->user()->hotel_id;
+
+        $start = $request->get('start', now()->startOfMonth()->toDateString());
+        $end = $request->get('end', now()->endOfMonth()->toDateString());
+
+        $bookingRooms = \App\Models\BookingRoom::with('booking.guest', 'room')
+            ->whereHas('room', fn($q) => $q->where('hotel_id', $hotelId))
+            ->where(function ($q) use ($start, $end) {
+                $q->whereBetween('check_in', [$start, $end])
+                    ->orWhereBetween('check_out', [$start, $end])
+                    ->orWhere(function ($q2) use ($start, $end) {
+                        $q2->where('check_in', '<=', $start)
+                            ->where('check_out', '>=', $end);
+                    });
+            })
+            ->get();
+
+        $events = $bookingRooms->map(function ($br) {
+            return [
+                'id' => $br->booking_id . '-' . $br->room_id, // unique per room
+                'title' => "{$br->booking->guest->full_name} (Room {$br->room->room_number})",
+                'start' => $br->check_in->toDateString(),
+                'end' => \Carbon\Carbon::parse($br->check_out)->addDay()->toDateString(), // FullCalendar exclusive
+                'room' => $br->room->room_number,
+                'status' => $br->booking->status,
+                'color' => match ($br->booking->status) {
+                    'reserved' => '#fce38a',
+                    'checked_in' => '#a2d5c6',
+                    'checked_out' => '#ccc',
+                    'cancelled' => '#f7a4a4',
+                    default => '#bbb',
+                },
+            ];
+        });
+
+        return response()->json($events);
+    }
+
+    public function calendarResources()
+    {
+        return \App\Models\Room::where('hotel_id', auth()->user()->hotel_id)
+            ->orderBy('room_number')
+            ->get()
+            ->map(fn($room) => [
+                'id' => $room->id,
+                'title' => 'Room ' . $room->room_number,
+            ]);
+    }
+
+    // public function apiCalendar(Request $request)
+    // {
+    //     $hotelId = auth()->user()->hotel_id;
+
+    //     $bookingRooms = BookingRoom::with('booking.guest', 'room')
+    //         ->whereHas('room', fn($q) => $q->where('hotel_id', $hotelId))
+    //         ->get();
+
+    //     return $bookingRooms->map(function ($br) {
+    //         return [
+    //             'id' => $br->booking_id . '-' . $br->room_id,
+    //             'resourceId' => $br->room_id,
+    //             'title' => $br->booking->guest->full_name,
+    //             'start' => $br->check_in->toDateString(),
+    //             'end' => $br->check_out->addDay()->toDateString(),
+    //             'status' => $br->booking->status,
+    //             'color' => match ($br->booking->status) {
+    //                 'checked_in' => '#a2d5c6',
+    //                 'reserved' => '#fce38a',
+    //                 'checked_out' => '#ccc',
+    //                 'cancelled' => '#f7a4a4',
+    //                 default => '#bbb',
+    //             }
+    //         ];
+    //     });
     // }
 }
