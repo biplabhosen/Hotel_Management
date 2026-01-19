@@ -102,14 +102,14 @@
     <table width="100%">
         <tr>
             <td>
-                <div class="hotel-name">Hotel Florida</div>
-                <div>florida@htflorida.com</div>
-                <div>Phone: </div>
-                <div>Email: </div>
+                <div class="hotel-name">{{ $hotel->name }}</div>
+                <div>{{ $hotel->address }}</div>
+                <div>Phone: {{ $hotel->phone }}</div>
+                <div>Email: {{ $hotel->email }}</div>
             </td>
             <td class="invoice-title">
                 INVOICE<br>
-                <small>#{{ $booking->invoice_number ?? 'TEMP-' . $booking->id }}</small>
+                <small>#{{ $booking->invoice_number ?? 'INV-'.now()->year .now()->month .'000' . $booking->id }}</small>
             </td>
         </tr>
     </table>
@@ -152,7 +152,7 @@
             @endphp
             <tr>
                 <td>
-                    Room {{ $br->room->room_number }} - {{$br->room->roomType->name}}
+                    Room {{ $br->room->room_number }}-{{ $br->room->roomType->name }}
                 </td>
                 <td>{{ $nights }}</td>
                 <td>{{ number_format($br->price_per_night, 2) }}</td>
@@ -188,7 +188,7 @@
 <div style="clear: both;"></div>
 
 <div class="footer">
-    This is a system-generated invoice from Hotel Florida PMS.<br>
+    This is a system-generated invoice from {{ $hotel->name }} PMS.<br>
     Generated on {{ now() }} | No signature required.
 </div>
 

@@ -5,19 +5,28 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\HotelController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/user', [UserController::class, 'index'])->middleware("auth");
-
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::match(["GET", "POST"], '/logout',[LoginController::class, 'logout'])->name('logout');
+Route::match(["GET", "POST"], '/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get("sendmail", [UserController::class, "sendmail"]);
 
-Route::middleware('auth')->prefix('booking')->controller(BookingController::class)->group(function(){
+
+Route::middleware(['auth'])->group(function () {
+    Route::patch('users/{user}/archive', [UserController::class, 'archive'])->name('users.archive');
+
+    Route::patch('users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::resource('users', UserController::class);
+});
+
+Route::middleware(['auth'])->resource('hotels', HotelController::class);
+
+Route::middleware('auth')->prefix('booking')->controller(BookingController::class)->group(function () {
 
     Route::get('/', 'index');
     Route::get('create', 'create');
@@ -31,10 +40,9 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::get('calendar', 'calendar')->name('room.calendar');
     Route::get('calendar/api', 'apiCalendar')->name('room.calendar.api');
     Route::get('calendar/resources', 'calendarResources')->name('room.calendar.resources');
-
 });
 
-Route::middleware('auth')->prefix('payment')->controller(PaymentController::class)->group(function(){
+Route::middleware('auth')->prefix('payment')->controller(PaymentController::class)->group(function () {
 
     Route::get('/', 'index')->name('payment.index');
     Route::get('booking/{booking}', 'show')->name('booking.show');
@@ -48,7 +56,7 @@ Route::middleware('auth')->prefix('payment')->controller(PaymentController::clas
     Route::post('{payment}/refund', 'refund')->name('payment.refund');
 });
 
-Route::middleware('auth')->prefix('room')->controller(RoomController::class)->group(function(){
+Route::middleware('auth')->prefix('room')->controller(RoomController::class)->group(function () {
 
     Route::get('/', 'index');
     Route::get('create', 'create');
@@ -57,4 +65,3 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
     Route::put('update', 'update');
     Route::get('occupancy', 'occupency');
 });
-
