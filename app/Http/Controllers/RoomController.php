@@ -23,47 +23,32 @@ class RoomController extends Controller
 
     public function create()
     {
-        return view("pages.erp.rooms.add");
+        $hotelId = auth()->user()->hotel_id;
+        $roomTypes = RoomType::where('hotel_id', $hotelId)->orderBy('name')->get();
+        return view("pages.erp.rooms.add", compact('roomTypes'));
     }
 
     public function store(Request $request)
     {
-        // print_r($request->all());
         $hotelId = auth()->user()->hotel_id;
 
-        // $roomType = new RoomType();
-        // $roomType->hotel_id = $hotelId;
-        // $roomType->name = $request->room_type_id;
-        // $roomType->bed_type = $request->bed_type;
-        // $roomType->price_per_night = $request->price_per_night;
-        // $roomType->bed_count = $request->bed_count;
-        // $roomType->capacity = $request->capacity;
-        // $roomType->save();
+        $validated = $request->validate([
+            'room_number' => 'required|string',
+            'room_type_id' => [
+                'required',
+                Rule::exists('room_types', 'id')->where(fn($query) => $query->where('hotel_id', $hotelId)),
+            ],
+            'floor' => 'required|integer',
+            'status' => 'required|string',
+        ]);
 
-        // $room = new Room();
-        // $room->hotel_id = $hotelId;
-        // $room->room_number = $request->room_number;
-        // $room->room_type_id = $roomType->id;
-        // $room->floor = $request->floor;
-        // $room->status = $request->status;
-        // $room->save();
-        DB::transaction(function () use ($request, $hotelId) {
-
-            // $roomType = RoomType::create([
-            //     'hotel_id' => $hotelId,
-            //     'name' => $request->room_type_id,
-            //     'bed_type' => $request->bed_type,
-            //     'price_per_night' => $request->price_per_night,
-            //     'bed_count' => $request->bed_count,
-            //     'capacity' => $request->capacity,
-            // ]);
-
+        DB::transaction(function () use ($validated, $hotelId) {
             Room::create([
                 'hotel_id' => $hotelId,
-                'room_number' => $request->room_number,
-                'room_type_id' => $request->roomType_id,
-                'floor' => $request->floor,
-                'status' => $request->status,
+                'room_number' => $validated['room_number'],
+                'room_type_id' => $validated['room_type_id'],
+                'floor' => $validated['floor'],
+                'status' => $validated['status'],
             ]);
         });
 

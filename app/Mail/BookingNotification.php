@@ -13,32 +13,28 @@ class BookingNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $booking;
+    public $hotel;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($booking)
     {
-        //
+        $this->booking = $booking->load([
+            'guest',
+            'hotel',
+            'bookingRooms.room.roomType',
+        ]);
+
+        $this->hotel = $this->booking->hotel;
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    public function build()
     {
-        return new Envelope(
-            subject: 'Booking Notification',
-        );
-    }
-
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'view.name',
-        );
+        return $this->subject(
+            'Your Reservation is Confirmed – ' . $this->hotel->name
+        )
+            ->view('mail.bookingconfirm');
     }
 
     /**

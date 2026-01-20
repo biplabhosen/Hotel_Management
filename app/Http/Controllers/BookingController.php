@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\BookingNotification;
 use App\Mail\UserNotification;
 use App\Models\Booking;
 use App\Models\BookingRoom;
@@ -260,7 +261,7 @@ class BookingController extends Controller
                     'check_out' => $request->check_out,
                 ]);
             }
-            Mail::to($guest->email)->send(new UserNotification($guest));
+            Mail::to($guest->email)->send(new BookingNotification($booking));
 
             DB::commit();
 
