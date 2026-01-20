@@ -3,7 +3,13 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0">Bookings</h3>
-    <a href="{{ url('booking/create') }}" class="btn btn-primary">+ New Booking</a>
+    <div class="d-flex gap-2 align-items-center">
+        <form method="GET" action="{{ route('booking.night_report') }}" class="d-flex align-items-center" target="_blank">
+            <input type="date" name="date" value="{{ request('date', now()->subDay()->toDateString()) }}" class="form-control form-control-sm me-1">
+            <button class="btn btn-secondary btn-sm" type="submit">Download Night Report</button>
+        </form>
+        <a href="{{ url('booking/create') }}" class="btn btn-primary">+ New Booking</a>
+    </div>
 </div>
 @if ($errors->any())
         <div class="alert alert-danger">

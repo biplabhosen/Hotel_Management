@@ -40,6 +40,7 @@ Route::middleware('auth')->prefix('booking')->controller(BookingController::clas
     Route::get('calendar', 'calendar')->name('room.calendar');
     Route::get('calendar/api', 'apiCalendar')->name('room.calendar.api');
     Route::get('calendar/resources', 'calendarResources')->name('room.calendar.resources');
+    Route::get('night-report', 'nightReport')->name('booking.night_report');
 });
 
 Route::middleware('auth')->prefix('payment')->controller(PaymentController::class)->group(function () {

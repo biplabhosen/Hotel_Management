@@ -434,6 +434,74 @@ class BookingController extends Controller
 
 
 
+    /**
+     * Download night report (CSV) for a given date (defaults to yesterday).
+     */
+    public function nightReport(Request $request)
+    {
+        $hotelId = auth()->user()->hotel_id;
+        $date = $request->get('date', now()->subDay()->toDateString());
+
+        // Check-ins
+        $checkIns = Booking::where('hotel_id', $hotelId)
+            ->whereHas('bookingRooms', function($q) use ($date) {
+                $q->whereDate('check_in', $date);
+            })
+            ->with(['guest', 'bookingRooms.room'])
+            ->get();
+
+        // Check-outs
+        $checkOuts = Booking::where('hotel_id', $hotelId)
+            ->whereHas('bookingRooms', function($q) use ($date) {
+                $q->whereDate('check_out', $date);
+            })
+            ->with(['guest', 'bookingRooms.room'])
+            ->get();
+
+        // Payments for the date
+        $payments = DB::table('payments')
+            ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
+            ->where('bookings.hotel_id', $hotelId)
+            ->whereDate('payments.created_at', $date)
+            ->select('payments.*', 'bookings.guest_id')
+            ->get();
+
+        $filename = "night-report-{$date}.csv";
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($checkIns, $checkOuts, $payments, $date) {
+            $out = fopen('php://output', 'w');
+
+            // Header
+            fputcsv($out, ['Night Report', $date]);
+            fputcsv($out, []);
+            fputcsv($out, ['Section', 'Type', 'Booking ID', 'Guest', 'Rooms', 'Check In', 'Check Out', 'Amount', 'Method', 'Payment Date']);
+
+            foreach ($checkIns as $b) {
+                $rooms = $b->bookingRooms->pluck('room.room_number')->filter()->unique()->implode('|');
+                fputcsv($out, ['Check-In', 'check_in', $b->id, $b->guest->full_name ?? '', $rooms, $b->bookingRooms->min('check_in'), $b->bookingRooms->max('check_out'), '', '', '']);
+            }
+
+            foreach ($checkOuts as $b) {
+                $rooms = $b->bookingRooms->pluck('room.room_number')->filter()->unique()->implode('|');
+                fputcsv($out, ['Check-Out', 'check_out', $b->id, $b->guest->full_name ?? '', $rooms, $b->bookingRooms->min('check_in'), $b->bookingRooms->max('check_out'), '', '', '']);
+            }
+
+            foreach ($payments as $p) {
+                $guest = Guest::find($p->guest_id);
+                fputcsv($out, ['Payment', 'payment', $p->booking_id, $guest->full_name ?? '', '', '', '', $p->amount, $p->method ?? '', \Carbon\Carbon::parse($p->created_at)->toDateString()]);
+            }
+
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     // public function occupency(){
     //     $hotelId = auth()->user()->hotel_id;
 
