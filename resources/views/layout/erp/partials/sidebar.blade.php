@@ -46,6 +46,9 @@
                             </ul>
                         </li>
                         <li>
+                            <a href="{{url('booking/calendar')}}"><i class="fe fe-smartphone"></i> <span> Booking Room</span></a>
+                        </li>
+                        <li>
                             <a href="{{url('room/occupancy')}}"><i class="fe fe-file-text"></i>
                                 <span>Occupancy</span>
                             </a>
@@ -67,21 +70,27 @@
                                 </li>
                             </ul>
                         </li>
+                        <li>
+                            <a href="{{ url('payment') }}"><i class="fe fe-credit-card"></i>
+                                <span>Payments</span>
+                            </a>
+                        </li>
                         <li class="submenu">
                             <a href="javascript:void(0);"><i class="fe fe-star"></i>
-                                <span>Review</span>
+                                <span>System</span>
                                 <span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
                             </a>
                             <ul>
                                 <li>
-                                    <a href="review-type.html">Review Type</a>
+                                    <a href="{{url('hotels')}}">Hotels</a>
                                 </li>
                                 <li>
-                                    <a href="review.html">Review</a>
+                                    <a href="{{route('users.index')}}">Users</a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-title">
+
+                        {{-- <li class="menu-title">
                             <h6>Booking</h6>
                         </li>
                         <li>
@@ -339,8 +348,19 @@
                         </li>
                         <li>
                             <a href="signin.html"><i class="fe fe-log-out"></i> <span>Logout</span></a>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
             </div>
         </div>
+{{-- INSERT INTO `htl_room_types`
+(`id`, `hotel_id`, `name`, `code`, `bed_type`, `bed_count`, `capacity`, `price_per_night`, `amenity_id`, `description`, `is_active`, `created_at`, `updated_at`)
+ VALUES
+ (NULL, '5', 'Suite', 'ST', 'Queen', '1', '2', '955', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '5', 'Delux', 'DL', 'Single', '1', '2', '955', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '5', 'Super Delux', 'SDL', 'Single', '1', '3', '725', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '5', 'Family', 'FL', 'Double', '1', '4', '855', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '6', 'Suite', 'ST', 'Queen', '1', '2', '955', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '6', 'Delux', 'DL', 'Single', '1', '2', '955', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '6', 'Super Delux', 'SDL', 'Single', '1', '3', '725', NULL, NULL, '1', current_timestamp(), current_timestamp()),
+ (NULL, '6', 'Family', 'FL', 'Double', '1', '4', '855', NULL, NULL, '1', current_timestamp(), current_timestamp()); --}}
