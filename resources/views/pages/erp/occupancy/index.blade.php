@@ -116,7 +116,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-purple d-flex justify-content-between">
                     <div>
-                        <h3>20</h3>
+                        <h3>{{ $totalRooms ?? 0 }}</h3>
                         <small>Total Rooms</small>
                     </div>
                     <i class="bi bi-building fs-1 opacity-50"></i>
@@ -125,7 +125,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-green d-flex justify-content-between">
                     <div>
-                        <h3>10</h3>
+                        <h3>{{ $availableCount ?? 0 }}</h3>
                         <small>Available</small>
                     </div>
                     <i class="bi bi-check-circle fs-1 opacity-50"></i>
@@ -134,7 +134,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-orange d-flex justify-content-between">
                     <div>
-                        <h3>7</h3>
+                        <h3>{{ $occupiedCount ?? 0 }}</h3>
                         <small>Occupied</small>
                     </div>
                     <i class="bi bi-door-closed fs-1 opacity-50"></i>
@@ -143,7 +143,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-blue d-flex justify-content-between">
                     <div>
-                        <h3>35%</h3>
+                        <h3>{{ $occupancyRate ?? 0 }}%</h3>
                         <small>Occupancy Rate</small>
                     </div>
                     <i class="bi bi-graph-up-arrow fs-1 opacity-50"></i>
@@ -158,44 +158,51 @@
                     <i class="bi bi-funnel me-1"></i> Room Filters
                 </h6>
 
-                <div class="row g-2">
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-search"></i></span>
-                            <input class="form-control" placeholder="Search room">
+                <form method="GET" action="{{ url('room/occupancy') }}">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input name="q" value="{{ request('q') }}" class="form-control" placeholder="Search room">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <select name="status" class="form-select">
+                                <option value="">Status</option>
+                                <option value="available" {{ request('status')=='available' ? 'selected' : '' }}>Available</option>
+                                <option value="occupied" {{ request('status')=='occupied' ? 'selected' : '' }}>Occupied</option>
+                                <option value="booked" {{ request('status')=='booked' ? 'selected' : '' }}>Booked</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <select name="room_type" class="form-select">
+                                <option value="">All Room Types</option>
+                                @foreach($roomTypes as $rt)
+                                    <option value="{{ $rt->id }}" {{ request('room_type') == $rt->id ? 'selected' : '' }}>{{ $rt->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="form-control">
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-control">
+                        </div>
+
+                        <div class="col-md-1 d-flex gap-1">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <a href="{{ url('room/occupancy') }}" class="btn btn-danger w-100">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
                         </div>
                     </div>
-
-                    <div class="col-md-2">
-                        <select class="form-select">
-                            <option>Status</option>
-                            <option>Available</option>
-                            <option>Occupied</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <select class="form-select">
-                            <option>Room Type</option>
-                            <option>Deluxe</option>
-                            <option>Suite</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <input type="date" class="form-control">
-                    </div>
-
-                    <div class="col-md-2">
-                        <input type="date" class="form-control">
-                    </div>
-
-                    <div class="col-md-1">
-                        <button class="btn btn-danger w-100">
-                            <i class="bi bi-x-circle"></i>
-                        </button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -240,7 +247,7 @@
         </div> --}}
 
             <!-- AVAILABLE ROOM -->
-            @foreach ($rooms as $room)
+            @foreach ($roomsWithStatus as $room)
                 <div class="col-md-3">
                     <div class="room-card h-100">
 
@@ -259,15 +266,16 @@
                             </div>
 
                             <!-- Status -->
-                            <span class="badge-status status-{{ $room->status }}">
-                                @if ($room->status === 'available')
+                            <span class="badge-status status-{{ $room->range_status ?? $room->status }}">
+                                @php $s = $room->range_status ?? $room->status; @endphp
+                                @if ($s === 'available')
                                     <i class="bi bi-check-circle me-1"></i>
-                                @elseif ($room->status === 'occupied')
+                                @elseif ($s === 'occupied')
                                     <i class="bi bi-person-fill-lock me-1"></i>
-                                @elseif ($room->status === 'booked')
+                                @elseif ($s === 'booked')
                                     <i class="bi bi-calendar-check me-1"></i>
                                 @endif
-                                {{ ucfirst($room->status) }}
+                                {{ ucfirst($s) }}
                             </span>
                         </div>
 

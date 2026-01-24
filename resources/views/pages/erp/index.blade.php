@@ -32,7 +32,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="30">30</span>
+                                        <span class="counters" data-count="{{ $newBookingsCount ?? 0 }}">{{ $newBookingsCount ?? 0 }}</span>
                                     </div>
                                     <h5> Current Month</h5>
                                 </div>
@@ -73,7 +73,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="25">25</span>
+                                        <span class="counters" data-count="{{ $availableRooms ?? 0 }}">{{ $availableRooms ?? 0 }}</span>
                                     </div>
                                     <h5> Current Month</h5>
                                 </div>
@@ -114,9 +114,9 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="18">18</span>
+                                        <span class="counters" data-count="{{ $checkoutsToday ?? 0 }}">{{ $checkoutsToday ?? 0 }}</span>
                                     </div>
-                                    <h5> Current Month</h5>
+                                    <h5> Today</h5>
                                 </div>
                                 <div class="homegraph">
                                     <img src="{{ asset('assets') }}/img/graph/graph3.png" alt="img">
@@ -155,7 +155,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="650">$650</span>
+                                        <span class="counters" data-count="{{ $revenueMonth ?? 0 }}">${{ number_format($revenueMonth ?? 0, 2) }}</span>
                                     </div>
                                     <h5> Current Month</h5>
                                 </div>
@@ -168,6 +168,43 @@
                 </div>
             </div>
         </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-1">Occupancy Rate</h6>
+                            <h3 class="mb-0">{{ $occupancyRate ?? 0 }}%</h3>
+                        </div>
+                        <div id="occupancy-radial" style="width:80px;height:80px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-1">Rooms Occupied</h6>
+                            <h3 class="mb-0">{{ $occupiedRooms ?? 0 }}</h3>
+                        </div>
+                        <i class="fe fe-user-check fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-1">Rooms Available</h6>
+                            <h3 class="mb-0">{{ $availableRooms ?? 0 }}</h3>
+                        </div>
+                        <i class="fe fe-check fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-6 col-sm-6 col-12 d-flex  widget-path">
                 <div class="card">
@@ -762,4 +799,44 @@
             </div>
         </div>
     
+@endsection
+
+@section('js')
+<script>
+(function waitForApex(){
+  if (typeof ApexCharts === 'undefined') { return setTimeout(waitForApex, 50); }
+
+  var labels = @json($labels ?? []);
+  var series = @json($series ?? []);
+
+  // Booking chart (monthly)
+  if (document.querySelector('#chart-booking')) {
+      new ApexCharts(document.querySelector('#chart-booking'), {
+          chart: { type: 'bar', height: 350 },
+          series: [{ name: 'Bookings', data: series }],
+          xaxis: { categories: labels }
+      }).render();
+  }
+
+  // Occupancy radial
+  if (document.querySelector('#occupancy-radial')) {
+      new ApexCharts(document.querySelector('#occupancy-radial'), {
+          chart: { type: 'radial', height: 80 },
+          series: [{{ $occupancyRate ?? 0 }}],
+          labels: ['Occupancy'],
+          plotOptions: { radialBar: { hollow: { size: '60%' } } }
+      }).render();
+  }
+
+  // Revenue area (simple monthly view)
+  if (document.querySelector('#chart-view')) {
+      new ApexCharts(document.querySelector('#chart-view'), {
+          chart: { type: 'area', height: 320 },
+          series: [{ name: 'Bookings', data: series }],
+          xaxis: { categories: labels }
+      }).render();
+  }
+
+})();
+</script>
 @endsection

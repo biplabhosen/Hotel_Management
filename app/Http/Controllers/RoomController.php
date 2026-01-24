@@ -86,16 +86,88 @@ class RoomController extends Controller
         return redirect()->back()->with('success', 'Room updated successfully.');
     }
 
-    public function occupency()
+    public function occupency(Request $request)
     {
         $hotelId = auth()->user()->hotel_id;
 
-        $rooms = Room::with('roomType.amenities')
-            ->where('hotel_id', $hotelId)
-            ->get();
+        $query = Room::with(['roomType.amenities', 'bookingRooms.booking'])
+            ->where('hotel_id', $hotelId);
 
-        $roomTypes = RoomType::where('hotel_id', $hotelId)->get();
+        if ($request->filled('q')) {
+            $query->where('room_number', 'like', '%' . $request->q . '%');
+        }
 
-        return view('pages.erp.occupancy.index', compact('rooms'));
+        if ($request->filled('room_type')) {
+            $query->where('room_type_id', $request->room_type);
+        }
+
+        $roomsCollection = $query->get();
+
+        // Date range parsing
+        $start = $request->filled('start_date') ? \Carbon\Carbon::parse($request->start_date) : null;
+        $end = $request->filled('end_date') ? \Carbon\Carbon::parse($request->end_date) : null;
+
+        // Compute status for the selected range per room
+        $roomsWithStatus = $roomsCollection->map(function ($room) use ($start, $end) {
+            $status = 'available';
+
+            foreach ($room->bookingRooms as $br) {
+                $checkIn = \Carbon\Carbon::parse($br->check_in);
+                $checkOut = \Carbon\Carbon::parse($br->check_out);
+
+                // overlap condition
+                $overlap = false;
+
+                if ($start && $end) {
+                    $overlap = $checkIn <= $end && $checkOut > $start;
+                } elseif ($start) {
+                    $overlap = $checkIn <= $start && $checkOut > $start;
+                } elseif ($end) {
+                    $overlap = $checkIn <= $end && $checkOut > $end;
+                } else {
+                    $today = \Carbon\Carbon::today();
+                    $overlap = $checkIn <= $today && $checkOut > $today;
+                }
+
+                if ($overlap) {
+                    $bstatus = $br->booking?->status;
+                    if ($bstatus === 'checked_in') {
+                        $status = 'occupied';
+                        break; // occupied takes precedence
+                    }
+
+                    if (in_array($bstatus, ['reserved', 'confirmed'])) {
+                        $status = 'booked';
+                    }
+                }
+            }
+
+            $room->range_status = $status;
+            return $room;
+        });
+
+        // Keep a baseline (before status filter) to compute summary numbers for selected filters & date range
+        $baseline = $roomsWithStatus;
+
+        // Apply status filter if requested
+        if ($request->filled('status')) {
+            $roomsWithStatus = $roomsWithStatus->filter(fn($r) => $r->range_status === $request->status)->values();
+        }
+
+        $totalRooms = $baseline->count();
+        $availableCount = $baseline->where('range_status', 'available')->count();
+        $occupiedCount = $baseline->where('range_status', 'occupied')->count();
+        $occupancyRate = $totalRooms > 0 ? round(($occupiedCount / $totalRooms) * 100, 2) : 0;
+
+        $roomTypes = RoomType::where('hotel_id', $hotelId)->orderBy('name')->get();
+
+        return view('pages.erp.occupancy.index', compact(
+            'roomsWithStatus',
+            'roomTypes',
+            'totalRooms',
+            'availableCount',
+            'occupiedCount',
+            'occupancyRate'
+        ));
     }
 }

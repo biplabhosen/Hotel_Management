@@ -261,7 +261,7 @@ class BookingController extends Controller
                     'check_out' => $request->check_out,
                 ]);
             }
-            Mail::to($guest->email)->send(new BookingNotification($booking));
+            // Mail::to($guest->email)->send(new BookingNotification($booking));
 
             DB::commit();
 
