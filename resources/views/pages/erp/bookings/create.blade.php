@@ -226,7 +226,7 @@ print_r($request->all())
             noRooms.classList.add('d-none');
             container.innerHTML = '';
 
-            fetch(`/booking/available?room_type_id=${roomType}&check_in=${checkIn}&check_out=${checkOut}`)
+            fetch(`{{URL("/")}}/booking/available?room_type_id=${roomType}&check_in=${checkIn}&check_out=${checkOut}`)
                 .then(res => res.json())
                 .then(rooms => {
                     spinner.classList.add('d-none');

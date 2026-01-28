@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>Hotel Paradise</title>
+    <title>Hotel App</title>
 
     <!-- Favicons -->
     <link rel="shortcut icon" href="{{asset('assets')}}/img/favicon.png">
@@ -56,48 +56,47 @@
         <span class="loader-inner"></span>
         </span>
     </div> --}}
-@yield('js')
+
     <!-- jQuery -->
-    <script data-cfasync="false" src="{{asset('assets')}}/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="{{asset('assets')}}/js/jquery-3.7.1.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script data-cfasync="false" src="{{asset('assets')}}/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="{{asset('assets')}}/js/jquery-3.7.1.min.js"></script>
 
     <!-- Select 2 JS-->
-    <script src="{{asset('assets')}}/js/select2.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/js/select2.min.js"></script>
 
     <!-- Chart JS -->
-    <script src="{{asset('assets')}}/plugins/apexchart/apexcharts.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/apexchart/chart-data.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/plugins/apexchart/apexcharts.min.js"></script>
+    <script src="{{asset('assets')}}/plugins/apexchart/chart-data.js"></script>
 
     <!-- Bootstrap Core JS -->
-    <script src="{{asset('assets')}}/plugins/bootstrap/js/bootstrap.bundle.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-     <!-- Feather Icon JS -->
-     <script src="{{asset('assets')}}/js/feather.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <!-- Feather Icon JS -->
+    <script src="{{asset('assets')}}/js/feather.min.js"></script>
 
     <!-- Datatable JS -->
-    <script src="{{asset('assets')}}/js/jquery.dataTables.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/js/jquery.dataTables.min.js"></script>
 
     <!-- Slimscroll JS -->
-    <script src="{{asset('assets')}}/plugins/slimscroll/jquery.slimscroll.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
     <!-- Map JS -->
-    <script src="{{asset('assets')}}/plugins/slimscroll/jquery.slimscroll.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-world-mill.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-ru-mill.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-us-aea.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-uk_countries-mill.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-in-mill.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/js/jvectormap.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js"></script>
+    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-world-mill.js"></script>
+    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-ru-mill.js"></script>
+    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-us-aea.js"></script>
+    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-uk_countries-mill.js"></script>
+    <script src="{{asset('assets')}}/plugins/jvectormap/jquery-jvectormap-in-mill.js"></script>
+    <script src="{{asset('assets')}}/js/jvectormap.js"></script>
 
 
  <!-- Sweetalert 2 -->
-    <script src="{{asset('assets')}}/plugins/sweetalert/sweetalert2.all.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-    <script src="{{asset('assets')}}/plugins/sweetalert/sweetalerts.min.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
+    <script src="{{asset('assets')}}/plugins/sweetalert/sweetalert2.all.min.js"></script>
+    <script src="{{asset('assets')}}/plugins/sweetalert/sweetalerts.min.js"></script>
 
     <!-- Custom JS -->
-    <script src="{{asset('assets')}}/js/admin.js" type="8516a8624507c09eab6f2a7a-text/javascript"></script>
-
-    <script src="{{asset('assets')}}/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="8516a8624507c09eab6f2a7a-|49" defer></script></body>
-
+    <script src="{{asset('assets')}}/js/admin.js"></script>
+    @yield('js')
 </body>
 </html>

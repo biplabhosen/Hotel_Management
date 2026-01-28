@@ -261,7 +261,7 @@ class BookingController extends Controller
                     'check_out' => $request->check_out,
                 ]);
             }
-            Mail::to($guest->email)->send(new BookingNotification($booking));
+            // Mail::to($guest->email)->send(new BookingNotification($booking));
 
             DB::commit();
 
@@ -595,11 +595,21 @@ class BookingController extends Controller
                 'title' => "{$br->booking->guest->full_name} (Room {$br->room->room_number})",
                 'start' => $br->check_in->toDateString(),
                 'end' => \Carbon\Carbon::parse($br->check_out)->addDay()->toDateString(), // FullCalendar exclusive
+                // resourceTimeline requires resourceId to attach event to resource row
+                'resourceId' => $br->room_id,
                 'room' => $br->room->room_number,
                 'status' => $br->booking->status,
+                // expose booking and guest in extendedProps for front-end
+                'extendedProps' => [
+                    'booking_id' => $br->booking_id,
+                    'guest_name' => $br->booking->guest->full_name ?? null,
+                    'check_in' => $br->check_in->toDateString(),
+                    'check_out' => $br->check_out->toDateString(),
+                    'status' => $br->booking->status,
+                ],
                 'color' => match ($br->booking->status) {
-                    'reserved' => '#fce38a',
-                    'checked_in' => '#a2d5c6',
+                    'reserved' => '#ffd950',
+                    'checked_in' => '#26AF48',
                     'checked_out' => '#ccc',
                     'cancelled' => '#f7a4a4',
                     default => '#bbb',
