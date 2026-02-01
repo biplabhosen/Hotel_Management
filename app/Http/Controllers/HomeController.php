@@ -45,8 +45,8 @@ class HomeController extends Controller
             ->whereBetween('created_at', [$startOfMonth, $now])
             ->count();
 
-        // Checkouts today
-        $checkoutsToday = \App\Models\Booking::where('hotel_id', $hotelId)
+        // Checkouts today (booking rooms store check_out)
+        $checkoutsToday = \App\Models\BookingRoom::whereHas('booking', fn($q) => $q->where('hotel_id', $hotelId))
             ->whereDate('check_out', \Carbon\Carbon::today())
             ->count();
 
@@ -62,6 +62,13 @@ class HomeController extends Controller
                 ->count();
         }
 
+        // Recent bookings (latest 6)
+        $recentBookings = \App\Models\Booking::where('hotel_id', $hotelId)
+            ->with(['guest', 'bookingRooms.room.roomType'])
+            ->orderByDesc('created_at')
+            ->limit(6)
+            ->get();
+
         return view('pages.erp.index', compact(
             'totalRooms',
             'availableRooms',
@@ -71,7 +78,8 @@ class HomeController extends Controller
             'newBookingsCount',
             'checkoutsToday',
             'labels',
-            'series'
+            'series',
+            'recentBookings'
         ));
     }
 }

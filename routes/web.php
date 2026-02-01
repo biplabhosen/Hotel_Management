@@ -65,4 +65,8 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
     Route::get('edit', 'edit');
     Route::put('update', 'update');
     Route::get('occupancy', 'occupency');
+    Route::get('occupancy/ajax', 'occupencyAjax');
 });
+
+// Simple web API endpoint to provide occupancy summary to dashboard (requires auth)
+Route::get('api/occupancy/summary', [RoomController::class, 'apiSummary'])->middleware('auth');

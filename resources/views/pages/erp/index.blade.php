@@ -32,7 +32,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="{{ $newBookingsCount ?? 0 }}">{{ $newBookingsCount ?? 0 }}</span>
+                                        <span id="newBookingsCount" class="counters">{{ $newBookingsCount ?? 0 }}</span>
                                     </div>
                                     <h5> Current Month</h5>
                                 </div>
@@ -73,7 +73,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="{{ $availableRooms ?? 0 }}">{{ $availableRooms ?? 0 }}</span>
+                                        <span id="availableRoomsCount" class="counters">{{ $availableRooms ?? 0 }}</span>
                                     </div>
                                     <h5> Current Month</h5>
                                 </div>
@@ -114,7 +114,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="{{ $checkoutsToday ?? 0 }}">{{ $checkoutsToday ?? 0 }}</span>
+                                        <span id="checkoutsToday" class="counters">{{ $checkoutsToday ?? 0 }}</span>
                                     </div>
                                     <h5> Today</h5>
                                 </div>
@@ -155,7 +155,7 @@
                                     <div class="home-usercontentcount">
                                         <img src="{{ asset('assets') }}/img/icons/arrow-up.svg" alt="img"
                                             class="me-2">
-                                        <span class="counters" data-count="{{ $revenueMonth ?? 0 }}">${{ number_format($revenueMonth ?? 0, 2) }}</span>
+                                        <span class="counters" data-count="650">$650</span>
                                     </div>
                                     <h5> Current Month</h5>
                                 </div>
@@ -168,43 +168,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="mb-1">Occupancy Rate</h6>
-                            <h3 class="mb-0">{{ $occupancyRate ?? 0 }}%</h3>
-                        </div>
-                        <div id="occupancy-radial" style="width:80px;height:80px"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="mb-1">Rooms Occupied</h6>
-                            <h3 class="mb-0">{{ $occupiedRooms ?? 0 }}</h3>
-                        </div>
-                        <i class="fe fe-user-check fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body d-flex align-items-center justify-content-between">
-                        <div>
-                            <h6 class="mb-1">Rooms Available</h6>
-                            <h3 class="mb-0">{{ $availableRooms ?? 0 }}</h3>
-                        </div>
-                        <i class="fe fe-check fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row">
             <div class="col-lg-6 col-sm-6 col-12 d-flex  widget-path">
                 <div class="card">
@@ -638,158 +601,45 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>28 Sep 2023</td>
-                                            <td>10:00:00 - 11:00:00</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-01.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>John Smith</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-03.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Sharon</span>
-
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-03.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Computer Repair</span>
-                                                </a>
-                                            </td>
-                                            <td>$80</td>
-                                            <td>
-                                                <h6 class="badge-pending">Pending</h6>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>10 Sep 2023</td>
-                                            <td>18:00:00 - 19:00:00 </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-04.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Johnny</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-05.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Pricilla</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-02.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Car Repair Services</span>
-                                                </a>
-                                            </td>
-                                            <td>$50</td>
-                                            <td>
-                                                <h6 class="badge-active">Completed</h6>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>25 Sep 2023</td>
-                                            <td>12:00:00 - 13:00:00</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-06.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Robert</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-02.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Amanda</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-04.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Steam Car Wash</span>
-                                                </a>
-                                            </td>
-                                            <td>$50</td>
-                                            <td>
-                                                <h6 class="badge-inactive">Inprogress</h6>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>08 Sep 2023</td>
-                                            <td>07 Oct 2023 11:22:51</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-09.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Sharonda</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-01.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>James</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-09.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>House Cleaning </span>
-                                                </a>
-                                            </td>
-                                            <td>$50</td>
-                                            <td>
-                                                <h6 class="badge-delete">Cancelled</h6>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>28 Sep 2023</td>
-                                            <td>10:00:00 - 11:00:00</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-01.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>John Smith</span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-03.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Sharon</span>
-
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-03.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Computer Repair</span>
-                                                </a>
-                                            </td>
-                                            <td>$80</td>
-                                            <td>
-                                                <h6 class="badge-pending">Pending</h6>
-                                            </td>
-                                        </tr>
+                                                @forelse($recentBookings as $idx => $booking)
+                                            <tr>
+                                                <td>{{ $idx + 1 }}</td>
+                                                <td>{{ optional($booking->created_at)->format('d M Y') }}</td>
+                                                <td>
+                                                    @php
+                                                        $br = $booking->bookingRooms->first();
+                                                    @endphp
+                                                    @if($br)
+                                                        {{ optional($br->check_in)->format('d M Y') }} - {{ optional($br->check_out)->format('d M Y') }}
+                                                    @else
+                                                        {{ optional($booking->check_in)->format('d M Y') }} - {{ optional($booking->check_out)->format('d M Y') }}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0);" class="table-profileimage">
+                                                        <img src="{{ asset('assets') }}/img/customer/user-01.jpg" class="me-2" alt="img">
+                                                        <span>{{ $booking->guest?->name ?? 'Guest' }}</span>
+                                                    </a>
+                                                </td>
+                                                <td>{{ $booking->guest?->phone ?? '-' }}</td>
+                                                <td>
+                                                    @php
+                                                        $service = $booking->bookingRooms->first()?->room?->roomType?->name ?? 'Room';
+                                                    @endphp
+                                                    <a href="#" class="table-imgname">
+                                                        <span>{{ $service }}</span>
+                                                    </a>
+                                                </td>
+                                                <td>${{ number_format($booking->total_amount, 2) }}</td>
+                                                <td>
+                                                    <h6 class="badge-{{ $booking->status === 'cancelled' ? 'delete' : ($booking->status === 'checked_in' ? 'active' : ($booking->status === 'checked_out' ? 'success' : 'pending')) }}">{{ ucfirst($booking->status) }}</h6>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="text-center">No recent bookings found.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -798,45 +648,48 @@
                 </div>
             </div>
         </div>
-    
+    </div>
 @endsection
 
 @section('js')
 <script>
-(function waitForApex(){
-  if (typeof ApexCharts === 'undefined') { return setTimeout(waitForApex, 50); }
+(function(){
+    // create occupancy radial chart if element exists
+    let occupancyRadialChart = null;
+    function createRadial(v){
+        const el = document.querySelector('#occupancy-radial');
+        if (!el) return;
+        if (occupancyRadialChart) {
+            occupancyRadialChart.updateSeries([v]);
+            return;
+        }
+        occupancyRadialChart = new ApexCharts(el, {
+            chart: { type: 'radial', height: 80 },
+            series: [v],
+            labels: ['Occupancy'],
+            plotOptions: { radialBar: { hollow: { size: '60%' } } }
+        });
+        occupancyRadialChart.render();
+    }
 
-  var labels = @json($labels ?? []);
-  var series = @json($series ?? []);
+    async function pollOccupancy(){
+        try{
+            const res = await fetch('{{ url('api/occupancy/summary') }}', { credentials: 'same-origin' });
+            if (!res.ok) return;
+            const data = await res.json();
+            document.getElementById('totalRoomsCount')?.innerText = data.totalRooms ?? 0;
+            document.getElementById('occupiedRoomsCount')?.innerText = data.occupied ?? 0;
+            document.getElementById('availableRoomsCount')?.innerText = data.available ?? 0;
+            document.getElementById('occupancyRateSmall')?.innerText = (data.occupancyRate ?? 0) + '%';
+            createRadial(data.occupancyRate ?? 0);
+        }catch(err){ console.error('occupancy poll failed', err); }
+    }
 
-  // Booking chart (monthly)
-  if (document.querySelector('#chart-booking')) {
-      new ApexCharts(document.querySelector('#chart-booking'), {
-          chart: { type: 'bar', height: 350 },
-          series: [{ name: 'Bookings', data: series }],
-          xaxis: { categories: labels }
-      }).render();
-  }
-
-  // Occupancy radial
-  if (document.querySelector('#occupancy-radial')) {
-      new ApexCharts(document.querySelector('#occupancy-radial'), {
-          chart: { type: 'radial', height: 80 },
-          series: [{{ $occupancyRate ?? 0 }}],
-          labels: ['Occupancy'],
-          plotOptions: { radialBar: { hollow: { size: '60%' } } }
-      }).render();
-  }
-
-  // Revenue area (simple monthly view)
-  if (document.querySelector('#chart-view')) {
-      new ApexCharts(document.querySelector('#chart-view'), {
-          chart: { type: 'area', height: 320 },
-          series: [{ name: 'Bookings', data: series }],
-          xaxis: { categories: labels }
-      }).render();
-  }
-
+    // initial
+    document.addEventListener('DOMContentLoaded', function(){
+        pollOccupancy();
+        setInterval(pollOccupancy, 30000);
+    });
 })();
 </script>
 @endsection

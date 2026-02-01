@@ -207,145 +207,17 @@
         </div>
 
         <!-- ROOMS -->
-        <div class="row g-4">
-
-            <!-- ROOM CARD -->
-            {{-- <div class="col-md-3">
-            <div class="room-card">
-                <div class="d-flex justify-content-between mb-2">
-                    <strong>
-                        <i class="bi bi-door-open me-1"></i> Room 101
-                    </strong>
-                    <span class="badge-status status-occupied">
-                        <i class="bi bi-person-fill-lock me-1"></i> Occupied
-                    </span>
-                </div>
-
-                <small class="text-muted">
-                    <i class="bi bi-star-fill me-1"></i> Super Deluxe
-                </small>
-
-                <p class="mt-2 mb-1">
-                    <i class="bi bi-currency-dollar"></i> 320 / night
-                </p>
-
-                <small>
-                    <i class="bi bi-people"></i> 2 Adults, 2 Children
-                </small>
-
-                <div class="amenities mt-2">
-                    <i class="bi bi-wifi"></i>
-                    <i class="bi bi-tv"></i>
-                    <i class="bi bi-cup-hot"></i>
-                    <i class="bi bi-snow"></i>
-                </div>
-
-                <button class="btn btn-primary btn-sm w-100 mt-3">
-                    <i class="bi bi-person-vcard me-1"></i> Guest Details
-                </button>
-            </div>
-        </div> --}}
-
-            <!-- AVAILABLE ROOM -->
-            @foreach ($roomsWithStatus as $room)
-                <div class="col-md-3">
-                    <div class="room-card h-100">
-
-                        <!-- Header -->
-                        <div class="d-flex justify-content-between mb-2">
-                            <div>
-                                <strong class="d-flex align-items-center gap-2">
-                                    <i class="bi bi-door-open"></i>
-                                    Room {{ $room->room_number }}
-                                </strong>
-                                <small class="text-muted d-flex align-items-center gap-2">
-                                    <i class="bi bi-layers"></i>
-                                    Floor {{ $room->floor }}
-                                </small>
-
-                            </div>
-
-                            <!-- Status -->
-                            <span class="badge-status status-{{ $room->range_status ?? $room->status }}">
-                                @php $s = $room->range_status ?? $room->status; @endphp
-                                @if ($s === 'available')
-                                    <i class="bi bi-check-circle me-1"></i>
-                                @elseif ($s === 'occupied')
-                                    <i class="bi bi-person-fill-lock me-1"></i>
-                                @elseif ($s === 'booked')
-                                    <i class="bi bi-calendar-check me-1"></i>
-                                @endif
-                                {{ ucfirst($s) }}
-                            </span>
-                        </div>
-
-                        <!-- Status Icons -->
-                        {{-- <div class="d-flex gap-3 text-muted mb-2 status-icons">
-            <span><i class="bi bi-check-circle"></i> Available</span>
-            <span><i class="bi bi-calendar-check"></i> Booked</span>
-            <span><i class="bi bi-person-fill-lock"></i> Occupied</span>
-        </div> --}}
-
-                        <!-- Room Type -->
-                        <p class="room-meta mt-4 text-muted">
-                            <i class="bi bi-star-fill text-warning me-1"></i>
-                            {{ $room->roomType?->name }}
-                        </p>
-
-                        <p class="room-meta">
-                            <i class="bi bi-currency-dollar"></i>
-                            {{ $room->roomType?->price_per_night }} / night
-                        </p>
-
-                        <p class="room-meta">
-                            <i class="bi bi-moon-stars me-1"></i>
-                            {{ ucfirst($room->roomType?->bed_type) }} Bed
-                        </p>
-
-                        <p class="room-meta">
-                            <i class="bi bi-people me-1"></i>
-                            {{ $room->roomType?->capacity }} Adults
-                        </p>
-
-                        <!-- Amenities -->
-                        <div class="amenities mt-2 d-flex gap-2">
-                            @foreach ($room->roomType->amenities as $amenity)
-                            @php
-
-                                // print_r($room->roomType->amenities)
-                            @endphp
-                                <i class="bi bi-{{ $amenity->icon }}" data-bs-toggle="tooltip"
-                                    title="{{ $amenity->name }}"></i>
-                            @endforeach
-                        </div>
-
-                        <!-- Status-wise Button -->
-                        <div class="mt-3">
-                            @if ($room->status === 'available')
-                                <button class="btn btn-success btn-sm w-100" data-bs-toggle="offcanvas"
-                                    data-bs-target="#guestOffcanvas">
-                                    <i class="bi bi-person-plus me-1"></i> Add Guest
-                                </button>
-                            @elseif ($room->status === 'occupied')
-                                <button class="btn btn-primary btn-sm w-100" data-bs-toggle="modal"
-                                    data-bs-target="#guestModal">
-                                    <i class="bi bi-person-vcard me-1"></i> View Guest
-                                </button>
-                            @elseif ($room->status === 'booked')
-                                <button class="btn btn-warning btn-sm w-100">
-                                    <i class="bi bi-calendar-plus me-1"></i> Book Now
-                                </button>
-                            @endif
-                        </div>
-
+        <div id="rooms-list" class="row g-4">
+            @include('pages.erp.occupancy.partials.rooms', ['roomsWithStatus' => $roomsWithStatus])
+        </div>
                     </div>
                 </div>
-            @endforeach
+            {{-- @endforeach --}}
 
         </div>
     </div>
-@endsection
-<div class="modal fade" id="guestModal" tabindex="-1">
+    {{-- Modal --}}
+    <div class="modal fade" id="guestModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -389,3 +261,54 @@
         </form>
     </div>
 </div>
+@endsection
+
+    @section('js')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form[action="{{ url('room/occupancy') }}"]');
+        const roomsList = document.getElementById('rooms-list');
+        const debounce = (fn, delay = 300) => {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn(...args), delay);
+            };
+        };
+
+        async function submitAjax() {
+            const params = new URLSearchParams(new FormData(form));
+            const url = '{{ url('room/occupancy/ajax') }}?' + params.toString();
+            const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.roomsHtml) {
+                roomsList.innerHTML = data.roomsHtml;
+            }
+            // update summary cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                // map by small text within card
+                const small = card.querySelector('small')?.innerText?.trim();
+                if (small === 'Total Rooms') card.querySelector('h3').innerText = data.totalRooms;
+                if (small === 'Available') card.querySelector('h3').innerText = data.availableCount;
+                if (small === 'Occupied') card.querySelector('h3').innerText = data.occupiedCount;
+                if (small === 'Occupancy Rate') card.querySelector('h3').innerText = data.occupancyRate + '%';
+            });
+        }
+
+        // submit on form submit
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitAjax();
+            history.replaceState({}, '', this.action + '?' + new URLSearchParams(new FormData(this)).toString());
+        });
+
+        // live inputs
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(i => i.addEventListener('input', debounce(submitAjax)));
+
+    });
+    </script>
+    @endsection
+
+

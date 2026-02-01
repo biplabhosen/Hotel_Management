@@ -170,4 +170,129 @@ class RoomController extends Controller
             'occupancyRate'
         ));
     }
+
+    /**
+     * Return occupancy data array used by different endpoints
+     */
+    protected function computeOccupancy(Request $request)
+    {
+        $hotelId = auth()->user()->hotel_id;
+
+        $query = Room::with(['roomType.amenities', 'bookingRooms.booking'])
+            ->where('hotel_id', $hotelId);
+
+        if ($request->filled('q')) {
+            $query->where('room_number', 'like', '%' . $request->q . '%');
+        }
+
+        if ($request->filled('room_type')) {
+            $query->where('room_type_id', $request->room_type);
+        }
+
+        $roomsCollection = $query->get();
+
+        // Date range parsing
+        $start = $request->filled('start_date') ? \Carbon\Carbon::parse($request->start_date) : null;
+        $end = $request->filled('end_date') ? \Carbon\Carbon::parse($request->end_date) : null;
+
+        // Compute status for the selected range per room
+        $roomsWithStatus = $roomsCollection->map(function ($room) use ($start, $end) {
+            $status = 'available';
+
+            foreach ($room->bookingRooms as $br) {
+                $checkIn = \Carbon\Carbon::parse($br->check_in);
+                $checkOut = \Carbon\Carbon::parse($br->check_out);
+
+                // overlap condition
+                $overlap = false;
+
+                if ($start && $end) {
+                    $overlap = $checkIn <= $end && $checkOut > $start;
+                } elseif ($start) {
+                    $overlap = $checkIn <= $start && $checkOut > $start;
+                } elseif ($end) {
+                    $overlap = $checkIn <= $end && $checkOut > $end;
+                } else {
+                    $today = \Carbon\Carbon::today();
+                    $overlap = $checkIn <= $today && $checkOut > $today;
+                }
+
+                if ($overlap) {
+                    $bstatus = $br->booking?->status;
+                    if ($bstatus === 'checked_in') {
+                        $status = 'occupied';
+                        break; // occupied takes precedence
+                    }
+
+                    if (in_array($bstatus, ['reserved', 'confirmed'])) {
+                        $status = 'booked';
+                    }
+                }
+            }
+
+            $room->range_status = $status;
+            return $room;
+        });
+
+        // Keep a baseline (before status filter) to compute summary numbers for selected filters & date range
+        $baseline = $roomsWithStatus;
+
+        // Apply status filter if requested
+        if ($request->filled('status')) {
+            $filtered = $roomsWithStatus->filter(fn($r) => $r->range_status === $request->status)->values();
+        } else {
+            $filtered = $roomsWithStatus;
+        }
+
+        $totalRooms = $baseline->count();
+        $availableCount = $baseline->where('range_status', 'available')->count();
+        $occupiedCount = $baseline->where('range_status', 'occupied')->count();
+        $occupancyRate = $totalRooms > 0 ? round(($occupiedCount / $totalRooms) * 100, 2) : 0;
+
+        $roomTypes = RoomType::where('hotel_id', $hotelId)->orderBy('name')->get();
+
+        return [
+            'roomsWithStatus' => $filtered,
+            'baseline' => $baseline,
+            'roomTypes' => $roomTypes,
+            'totalRooms' => $totalRooms,
+            'availableCount' => $availableCount,
+            'occupiedCount' => $occupiedCount,
+            'occupancyRate' => $occupancyRate,
+        ];
+    }
+
+    /**
+     * AJAX endpoint used by the occupancy page to live filter results
+     */
+    public function occupencyAjax(Request $request)
+    {
+        $data = $this->computeOccupancy($request);
+
+        $html = view('pages.erp.occupancy.partials.rooms', ['roomsWithStatus' => $data['roomsWithStatus']])->render();
+
+        return response()->json([
+            'success' => true,
+            'totalRooms' => $data['totalRooms'],
+            'availableCount' => $data['availableCount'],
+            'occupiedCount' => $data['occupiedCount'],
+            'occupancyRate' => $data['occupancyRate'],
+            'roomsHtml' => $html,
+        ]);
+    }
+
+    /**
+     * Public API endpoint for dashboard polling
+     */
+    public function apiSummary(Request $request)
+    {
+        $data = $this->computeOccupancy($request);
+
+        return response()->json([
+            'totalRooms' => $data['totalRooms'],
+            'available' => $data['availableCount'],
+            'occupied' => $data['occupiedCount'],
+            'occupancyRate' => $data['occupancyRate'],
+        ]);
+    }
 }
