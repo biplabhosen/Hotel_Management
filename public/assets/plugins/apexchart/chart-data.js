@@ -20,13 +20,13 @@ $(document).ready(function() {
 
 	// Column chart
     if($('#chart-view').length > 0 ){
-    	      
+
         var options = {
             series: [{
             name: 'series1',
             data: [11, 32, 45, 32, 34, 52, 41],
             colors: [' #4169E1' ]
-            
+
           }, {
             name: 'series2',
             colors: [' #4169E1'],
@@ -43,7 +43,7 @@ $(document).ready(function() {
               shade: 'dark',
               type: "horizontal",
               shadeIntensity: 0.1,
-              gradientToColors: undefined, 
+              gradientToColors: undefined,
               inverseColors: true,
               opacityFrom: 0.5,
               opacityTo: 0.5,
@@ -67,18 +67,18 @@ $(document).ready(function() {
             categories: ["jan", "feb", "march", "april", "may", "june", "july"]
           },
           tooltip: {
-           
+
           },
           };
-  
+
           var chart = new ApexCharts(document.querySelector("#chart-view"), options);
           chart.render();
-        
-        
+
+
     }
 
     // Bar chart
-	
+
     if ($('#bar').length > 0) {
       var optionsBar = {
         chart: {
@@ -139,15 +139,15 @@ $(document).ready(function() {
             fontSize: '18px'
           }
         }
-    
+
       }
-      
+
       var chartBar = new ApexCharts(document.querySelector('#bar'), optionsBar);
       chartBar.render();
     }
 
     // Refund chart
-	
+
 	if ($('#refund').length > 0) {
     var optionsBar = {
       chart: {
@@ -211,15 +211,15 @@ $(document).ready(function() {
           fontSize: '18px'
         }
       }
-  
+
     }
-    
+
     var chartBar = new ApexCharts(document.querySelector('#refund'), optionsBar);
     chartBar.render();
     }
 
     // Line chart
-	
+
 	if ($('#apexcharts-area').length > 0) {
     var options = {
       chart: {
@@ -252,8 +252,8 @@ $(document).ready(function() {
     }
 
     // Column chart
-    if($('#chart-booking').length > 0 ){
-      
+    if($('#chart-booking').length > 0 && !document.getElementById('chart-booking').dataset.remote){
+
       var columnCtx = document.getElementById("chart-booking"),
     	columnConfig = {
     		colors: ['#4169E1'],
@@ -310,7 +310,7 @@ $(document).ready(function() {
     	columnChart.render();
     }
     if($('#chart-income').length > 0 ){
-    	   
+
         var options = {
             series: [{
             name: 'PRODUCT A',
@@ -326,7 +326,7 @@ $(document).ready(function() {
             type: 'area',
             stacked: false,
             height: 350,
-            
+
             zoom: {
               enabled: false
             },
@@ -391,12 +391,12 @@ $(document).ready(function() {
             offsetX: -10
           }
           };
-  
+
           var chart = new ApexCharts(document.querySelector("#chart"), options);
           chart.render();
     }
-    if($('#chart-bar').length > 0 ){
-    	   
+    if($('#chart-bar').length > 0 && !document.getElementById('chart-bar').dataset.remote){
+
       var options = {
         series: [10, 45 , 45],
         chart: {
@@ -420,8 +420,8 @@ $(document).ready(function() {
 
       var chart = new ApexCharts(document.querySelector("#chart-bar"), options);
       chart.render();
-    
+
     }
 
-    
+
 });

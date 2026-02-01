@@ -9,7 +9,7 @@
                         <div class="home-user">
                             <div class="home-userhead">
                                 <div class="home-usercount">
-                                    <span><img src="{{ asset('assets') }}/img/icons/user.svg" alt="img"></span>
+                                    <span><img src="{{ asset('assets') }}/img/icons/calendar.svg" alt="New Booking"></span>
                                     <h6>New Booking</h6>
                                 </div>
                                 <div class="home-useraction">
@@ -34,7 +34,7 @@
                                             class="me-2">
                                         <span id="newBookingsCount" class="counters">{{ $newBookingsCount ?? 0 }}</span>
                                     </div>
-                                    <h5> Current Month</h5>
+                                    <h5> Today</h5>
                                 </div>
                                 <div class="homegraph">
                                     <img src="{{ asset('assets') }}/img/graph/graph1.png" alt="img">
@@ -50,7 +50,7 @@
                         <div class="home-user home-provider">
                             <div class="home-userhead">
                                 <div class="home-usercount">
-                                    <span><img src="{{ asset('assets') }}/img/icons/user-circle.svg" alt="img"></span>
+                                    <span><img src="{{ asset('assets') }}/img/icons/service-icon-01.svg" alt="Available Rooms"></span>
                                     <h6>Available Rooms</h6>
                                 </div>
                                 <div class="home-useraction">
@@ -75,7 +75,7 @@
                                             class="me-2">
                                         <span id="availableRoomsCount" class="counters">{{ $availableRooms ?? 0 }}</span>
                                     </div>
-                                    <h5> Current Month</h5>
+                                    <h5> Today</h5>
                                 </div>
                                 <div class="homegraph">
                                     <img src="{{ asset('assets') }}/img/graph/graph2.png" alt="img">
@@ -91,7 +91,7 @@
                         <div class="home-user home-service">
                             <div class="home-userhead">
                                 <div class="home-usercount">
-                                    <span><img src="{{ asset('assets') }}/img/icons/service.svg" alt="img"></span>
+                                    <span><img src="{{ asset('assets') }}/img/icons/check-icon.svg" alt="Checkout"></span>
                                     <h6>Checkout</h6>
                                 </div>
                                 <div class="home-useraction">
@@ -257,200 +257,7 @@
                                 </div>
                             </div>
                             <div class="chartgraph">
-                                <div id="chart-booking"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-sm-12 d-flex widget-path">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="home-user">
-                            <div class="home-head-user home-graph-header">
-                                <h2>Top Services</h2>
-                                <a href="services.html" class="btn btn-viewall">View All<img
-                                        src="{{ asset('assets') }}/img/icons/arrow-right.svg" class="ms-2"
-                                        alt="img"></a>
-                            </div>
-                            <div class="table-responsive datatable-nofooter">
-                                <table class="table datatable">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Service</th>
-                                            <th>Category</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-03.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Computer Repair</span>
-                                                </a>
-                                            </td>
-                                            <td>Computer</td>
-                                            <td>$80</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-02.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Car Repair Services</span>
-                                                </a>
-                                            </td>
-                                            <td>Automobile</td>
-                                            <td>$50</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-04.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Car Wash</span>
-                                                </a>
-                                            </td>
-                                            <td>Automobile</td>
-                                            <td>$14</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-09.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>House Cleaning </span>
-                                                </a>
-                                            </td>
-                                            <td>Cleaning</td>
-                                            <td>$100</td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>
-                                                <a href="view-service.html" class="table-imgname">
-                                                    <img src="{{ asset('assets') }}/img/services/service-10.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Interior </span>
-                                                </a>
-                                            </td>
-                                            <td>Cleaning</td>
-                                            <td>$50</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-sm-12 d-flex widget-path">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="home-user">
-                            <div class="home-head-user home-graph-header">
-                                <h2>Top Providers</h2>
-                                <a href="providers.html" class="btn btn-viewall">View All<img
-                                        src="{{ asset('assets') }}/img/icons/arrow-right.svg" class="ms-2"
-                                        alt="img"></a>
-                            </div>
-                            <div class="table-responsive datatable-nofooter">
-                                <table class="table datatable ">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Provider Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-06.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Robert</span>
-                                                </a>
-                                            </td>
-                                            <td><a href="https://preadmin.dreamstechnologies.com/cdn-cgi/l/email-protection"
-                                                    class="__cf_email__"
-                                                    data-cfemail="a3d1ccc1c6d1d7e3c6dbc2ced3cfc68dc0ccce">[email&#160;protected]</a>
-                                            </td>
-                                            <td>+1 347-679-8275</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-09.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Sharonda</span>
-                                                </a>
-                                            </td>
-                                            <td><a href="https://preadmin.dreamstechnologies.com/cdn-cgi/l/email-protection"
-                                                    class="__cf_email__"
-                                                    data-cfemail="63100b02110c0d070223061b020e130f064d000c0e">[email&#160;protected]</a>
-                                            </td>
-                                            <td>+1 570-621-248</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-01.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>John Smith</span>
-                                                </a>
-                                            </td>
-                                            <td><a href="https://preadmin.dreamstechnologies.com/cdn-cgi/l/email-protection"
-                                                    class="__cf_email__"
-                                                    data-cfemail="f69c999e98859b9f829eb6938e979b869a93d895999b">[email&#160;protected]</a>
-                                            </td>
-                                            <td>+1 646-957-0004</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-05.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>Pricilla</span>
-                                                </a>
-                                            </td>
-                                            <td><a href="https://preadmin.dreamstechnologies.com/cdn-cgi/l/email-protection"
-                                                    class="__cf_email__"
-                                                    data-cfemail="a7d7d5cec4cecbcbc6e7c2dfc6cad7cbc289c4c8ca">[email&#160;protected]</a>
-                                            </td>
-                                            <td>+1 614-915-8101</td>
-                                        </tr>
-                                        <tr>
-                                            <td>5</td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="table-profileimage">
-                                                    <img src="{{ asset('assets') }}/img/customer/user-09.jpg"
-                                                        class="me-2" alt="img">
-                                                    <span>James</span>
-                                                </a>
-                                            </td>
-                                            <td><a href="https://preadmin.dreamstechnologies.com/cdn-cgi/l/email-protection"
-                                                    class="__cf_email__"
-                                                    data-cfemail="cea4afa3abbd8eabb6afa3bea2abe0ada1a3">[email&#160;protected]</a>
-                                            </td>
-                                            <td>+1 918-543-3702</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div id="chart-booking" data-remote="true"></div>
                             </div>
                         </div>
                     </div>
@@ -541,14 +348,14 @@
                         <div class="home-user">
                             <div class="home-head-user home-graph-header">
                                 <h2>Booking Statistics</h2>
-                                <a href="booking.html" class="btn btn-viewall">View All<img
+                                <a href="{{ url('booking') }}" class="btn btn-viewall">View All<img
                                         src="{{ asset('assets') }}/img/icons/arrow-right.svg" class="ms-2"
                                         alt="img"></a>
                             </div>
                             <div class="chartgraph">
                                 <div class="row align-items-center">
                                     <div class="col-lg-7 col-sm-6">
-                                        <div id="chart-bar"></div>
+                                        <div id="chart-bar" data-remote="true"></div>
                                     </div>
                                     <div class="col-lg-5 col-sm-6">
                                         <div class="bookingstatus">
@@ -582,7 +389,7 @@
                         <div class="home-user">
                             <div class="home-head-user home-graph-header">
                                 <h2>Recent Booking</h2>
-                                <a href="booking.html" class="btn btn-viewall">View All<img
+                                <a href="{{ url('booking') }}" class="btn btn-viewall">View All<img
                                         src="{{ asset('assets') }}/img/icons/arrow-right.svg" class="ms-2"
                                         alt="img"></a>
                             </div>
@@ -593,9 +400,9 @@
                                             <th>#</th>
                                             <th>Date</th>
                                             <th>Booking Time</th>
-                                            <th>Provider</th>
-                                            <th>User</th>
-                                            <th>Service</th>
+                                            <th>Guest</th>
+                                            <th>Phone</th>
+                                            <th>Room</th>
                                             <th>Amount</th>
                                             <th>Status</th>
                                         </tr>
@@ -617,8 +424,8 @@
                                                 </td>
                                                 <td>
                                                     <a href="javascript:void(0);" class="table-profileimage">
-                                                        <img src="{{ asset('assets') }}/img/customer/user-01.jpg" class="me-2" alt="img">
-                                                        <span>{{ $booking->guest?->name ?? 'Guest' }}</span>
+                                                        {{-- <img src="{{ asset('assets') }}/img/customer/user-01.jpg" class="me-2" alt="img"> --}}
+                                                        <span>{{ $booking->guest?->full_name ?? 'Guest' }}</span>
                                                     </a>
                                                 </td>
                                                 <td>{{ $booking->guest?->phone ?? '-' }}</td>
@@ -632,7 +439,11 @@
                                                 </td>
                                                 <td>${{ number_format($booking->total_amount, 2) }}</td>
                                                 <td>
-                                                    <h6 class="badge-{{ $booking->status === 'cancelled' ? 'delete' : ($booking->status === 'checked_in' ? 'active' : ($booking->status === 'checked_out' ? 'success' : 'pending')) }}">{{ ucfirst($booking->status) }}</h6>
+                                                    @php
+                                                        $statusClass = $booking->status === 'cancelled' ? 'delete' : ($booking->status === 'checked_in' ? 'active' : ($booking->status === 'checked_out' ? 'success' : 'pending'));
+                                                        $statusLabel = ucwords(str_replace('_', ' ', $booking->status));
+                                                    @endphp
+                                                    <h6 class="badge badge-{{ $statusClass }}">{{ $statusLabel }}</h6>
                                                 </td>
                                             </tr>
                                         @empty
@@ -691,5 +502,77 @@
         setInterval(pollOccupancy, 30000);
     });
 })();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    // initialize chart instances (so they can be updated by polling)
+    let bookingBarChart = null;
+    let bookingPieChart = null;
+
+    function renderBookingBar(labels, series){
+        const el = document.querySelector('#chart-booking');
+        if (!el) return;
+        const options = {
+            chart: { type: 'bar', height: 350, toolbar: { show: false } },
+            series: [{ name: 'Bookings', data: series }],
+            plotOptions: { bar: { horizontal: false, columnWidth: '60%', endingShape: 'rounded' } },
+            dataLabels: { enabled: false },
+            xaxis: { categories: labels },
+            tooltip: { y: { formatter: val => val + ' bookings' } }
+        };
+        el.innerHTML = '';
+        if (bookingBarChart) {
+            bookingBarChart.updateOptions({ xaxis: { categories: labels } });
+            bookingBarChart.updateSeries([{ name: 'Bookings', data: series }]);
+        } else {
+            bookingBarChart = new ApexCharts(el, options);
+            bookingBarChart.render();
+        }
+    }
+
+    function renderBookingPie(stats){
+        const el = document.querySelector('#chart-bar');
+        if (!el) return;
+        const series = [stats.completed, stats.process, stats.pending];
+        const total = series.reduce((a,b)=>a+b,0);
+        const options = {
+            series: series,
+            chart: { width: 200, type: 'pie' },
+            labels: ['Completed', 'Process', 'Pending'],
+            colors: ['#1BA345','#0081FF','#FEC001'],
+            tooltip: { y: { formatter: function(val){ const pct = total ? ((val / total) * 100).toFixed(1) : 0; return val + ' (' + pct + '%)'; } } },
+            legend: { position: 'right' },
+            responsive: [{ breakpoint: 480, options: { chart: { width: 200 }, legend: { position: 'bottom' } } }]
+        };
+        el.innerHTML = '';
+        if (bookingPieChart) {
+            bookingPieChart.updateSeries(series);
+            bookingPieChart.updateOptions({ labels: ['Completed','Process','Pending'] });
+        } else {
+            bookingPieChart = new ApexCharts(el, options);
+            bookingPieChart.render();
+        }
+    }
+
+    // initial render from server-side values if present
+    renderBookingBar(@json($labels ?? []), @json($series ?? []));
+    renderBookingPie(@json($bookingStats ?? ['completed'=>0,'process'=>0,'pending'=>0]));
+
+    async function fetchBookingStats(){
+        try{
+            const res = await fetch('{{ url('api/bookings/stats') }}', { credentials: 'same-origin' });
+            if (!res.ok) return;
+            const data = await res.json();
+            renderBookingBar(data.labels || [], data.series || []);
+            renderBookingPie(data.bookingStats || { completed: 0, process: 0, pending: 0 });
+        }catch(err){ console.error('booking stats fetch failed', err); }
+    }
+
+    // poll for updates every 60s
+    fetchBookingStats();
+    setInterval(fetchBookingStats, 60000);
+
+});
 </script>
 @endsection

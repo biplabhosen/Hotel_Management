@@ -70,3 +70,6 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
 
 // Simple web API endpoint to provide occupancy summary to dashboard (requires auth)
 Route::get('api/occupancy/summary', [RoomController::class, 'apiSummary'])->middleware('auth');
+
+// Booking statistics API (used by dashboard SPA polling)
+Route::get('api/bookings/stats', [App\Http\Controllers\HomeController::class, 'apiBookingStats'])->middleware('auth');

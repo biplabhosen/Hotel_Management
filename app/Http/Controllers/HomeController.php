@@ -62,6 +62,20 @@ class HomeController extends Controller
                 ->count();
         }
 
+        // Booking status counts for the current month (used by the Booking Statistics pie)
+        $statusCounts = \App\Models\Booking::where('hotel_id', $hotelId)
+            ->whereBetween('created_at', [$startOfMonth, $now])
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $bookingStats = [
+            'completed' => $statusCounts['checked_out'] ?? 0,
+            'process'   => $statusCounts['checked_in'] ?? 0,
+            'pending'   => ($statusCounts['reserved'] ?? 0) + ($statusCounts['pending'] ?? 0),
+        ];
+
         // Recent bookings (latest 6)
         $recentBookings = \App\Models\Booking::where('hotel_id', $hotelId)
             ->with(['guest', 'bookingRooms.room.roomType'])
@@ -79,7 +93,49 @@ class HomeController extends Controller
             'checkoutsToday',
             'labels',
             'series',
-            'recentBookings'
+            'recentBookings',
+            'bookingStats'
         ));
+    }
+
+    /**
+     * API endpoint returning booking statistics used by the dashboard SPA
+     */
+    public function apiBookingStats(Request $request)
+    {
+        $hotelId = auth()->user()->hotel_id;
+        $months = max(1, (int) $request->query('months', 6));
+
+        $labels = [];
+        $series = [];
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $m = \Carbon\Carbon::now()->subMonths($i);
+            $labels[] = $m->format('M');
+            $series[] = \App\Models\Booking::where('hotel_id', $hotelId)
+                ->whereMonth('created_at', $m->month)
+                ->whereYear('created_at', $m->year)
+                ->count();
+        }
+
+        $startOfMonth = \Carbon\Carbon::now()->startOfMonth();
+        $now = \Carbon\Carbon::now();
+        $statusCounts = \App\Models\Booking::where('hotel_id', $hotelId)
+            ->whereBetween('created_at', [$startOfMonth, $now])
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $bookingStats = [
+            'completed' => $statusCounts['checked_out'] ?? 0,
+            'process'   => $statusCounts['checked_in'] ?? 0,
+            'pending'   => ($statusCounts['reserved'] ?? 0) + ($statusCounts['pending'] ?? 0),
+        ];
+
+        return response()->json([
+            'labels' => $labels,
+            'series' => $series,
+            'bookingStats' => $bookingStats,
+        ]);
     }
 }
