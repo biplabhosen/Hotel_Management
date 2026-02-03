@@ -99,7 +99,7 @@ class BookingController extends Controller
             ->pluck('count', 'status')
             ->toArray();
 
-        $statuses = ['reserved', 'checked_in', 'checked_out', 'cancelled'];
+        $statuses = ['reserved', 'checked_in', 'checked_out', 'cancelled', 'no_show'];
 
         return view('pages.erp.bookings.index', compact('bookings', 'statuses', 'counts'));
     }
@@ -138,6 +138,8 @@ class BookingController extends Controller
                             $q->where('check_in', '<=', $request->check_in)
                                 ->where('check_out', '>=', $request->check_out);
                         });
+                })->whereHas('booking', function ($b) {
+                    $b->whereNotIn('status', ['cancelled', 'no_show']);
                 });
             })
             ->get();
@@ -245,6 +247,9 @@ class BookingController extends Controller
                 $isBooked = BookingRoom::where('room_id', $room->id)
                     ->where('check_in', '<', $request->check_out)
                     ->where('check_out', '>', $request->check_in)
+                    ->whereHas('booking', function ($b) {
+                        $b->whereNotIn('status', ['cancelled', 'no_show']);
+                    })
                     ->exists();
 
                 if ($isBooked) {

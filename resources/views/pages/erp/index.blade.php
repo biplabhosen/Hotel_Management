@@ -17,14 +17,7 @@
                                         aria-expanded="true">
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
-                                    <ul class="dropdown-menu" data-popper-placement="bottom-end">
-                                        <li>
-                                            <a href="#" class="dropdown-item"> View</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="dropdown-item"> Edit</a>
-                                        </li>
-                                    </ul>
+
                                 </div>
                             </div>
                             <div class="home-usercontent">
@@ -34,7 +27,7 @@
                                             class="me-2">
                                         <span id="newBookingsCount" class="counters">{{ $newBookingsCount ?? 0 }}</span>
                                     </div>
-                                    <h5> Today</h5>
+                                    <h5> This Month</h5>
                                 </div>
                                 <div class="homegraph">
                                     <img src="{{ asset('assets') }}/img/graph/graph1.png" alt="img">

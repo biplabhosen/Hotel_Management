@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('check_in');
             $table->date('check_out');
             $table->integer('total_guests');
-            $table->enum('status', ['reserved', 'checked_in', 'checked_out', 'cancelled']);
+            $table->enum('status', ['reserved', 'checked_in', 'checked_out', 'cancelled', 'no_show']);
             $table->timestamps();
         });
     }

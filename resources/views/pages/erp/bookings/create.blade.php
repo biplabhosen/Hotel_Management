@@ -142,7 +142,6 @@
 
     </form>
 @endsection
-print_r($request->all())
 @section('js')
     {{-- <script>
         $(document).ready(function() {

@@ -42,6 +42,18 @@ class RoomController extends Controller
             'status' => 'required|string',
         ]);
 
+        try {
+            $existingRoom = Room::where('hotel_id', $hotelId)
+                ->where('room_number', $validated['room_number'])
+                ->first();
+
+            if ($existingRoom) {
+                return redirect()->back()->withErrors(['room_number' => 'Room number already exists in this hotel.'])->withInput();
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['database' => 'An error occurred while checking for existing room numbers.'])->withInput();
+        }
+        
         DB::transaction(function () use ($validated, $hotelId) {
             Room::create([
                 'hotel_id' => $hotelId,
