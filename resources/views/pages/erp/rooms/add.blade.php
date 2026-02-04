@@ -174,7 +174,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <div class="form-group">
                             <select name="bed_type" class="form-select" required>
                                 <option value="" disabled selected hidden></option>
@@ -186,12 +186,12 @@
                         </div>
                     </div>
 
-                    {{-- <div class="col-md-6">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <input type="number" name="price_per_night" class="form-control" placeholder=" ">
                             <label>Rent per Night</label>
                         </div>
-                    </div> --}}
+                    </div>
 
                     <div class="col-md-6">
                         <div class="form-group">
@@ -200,7 +200,7 @@
                         </div>
                     </div>
 
-                    {{-- <div class="col-md-6">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <input type="number" class="form-control" placeholder=" " required>
                             <label>Room Size (sq ft) *</label>

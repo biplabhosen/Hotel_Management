@@ -53,7 +53,7 @@ class RoomController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['database' => 'An error occurred while checking for existing room numbers.'])->withInput();
         }
-        
+
         DB::transaction(function () use ($validated, $hotelId) {
             Room::create([
                 'hotel_id' => $hotelId,
@@ -66,6 +66,18 @@ class RoomController extends Controller
 
 
         return redirect()->back()->with('success', 'Room created successfully.');
+    }
+
+    public function edit(Room $room)
+    {
+        $hotelId = auth()->user()->hotel_id;
+        // Security: hotel isolation
+        if ($room->hotel_id !== auth()->user()->hotel_id) {
+            abort(403);
+        }
+
+        $roomTypes = RoomType::where('hotel_id', $hotelId)->orderBy('name')->get();
+        return view("pages.erp.rooms.edit", compact('room', 'roomTypes'));
     }
 
     //     /**

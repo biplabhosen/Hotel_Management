@@ -144,6 +144,7 @@
                                         'checked_in' => 'badge bg-success',
                                         'checked_out' => 'badge bg-secondary',
                                         'cancelled' => 'badge bg-danger',
+                                        'no_show' => 'badge bg-dark',
                                         default => 'badge bg-light',
                                     };
                                 @endphp
@@ -317,7 +318,7 @@
                 var guest = this.dataset.guest || '';
 
                 var form = document.getElementById('paymentForm');
-                form.action = '/payment/booking/' + id;
+                form.action = '{{ url('/payment/booking') }}/' + id;
                 document.getElementById('pm_booking_id').value = id;
                 document.getElementById('pm_booking_info').textContent = 'Booking #' + id + (guest ? (' - ' + guest) : '');
                 document.getElementById('pm_amount').value = parseFloat(due).toFixed(2);

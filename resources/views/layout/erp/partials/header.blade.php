@@ -17,11 +17,12 @@
 						<input type="text" placeholder="Search" class="form-control">
 					</div>
                 </div>
+                <div>
+                    <h4>{{ Auth::user()->hotel->name }}</h4>
+                </div>
                 <ul class="nav user-menu">
                     <!-- Notifications -->
-                    <li class="nav-item">
-                        <a href="https://preadmin.dreamstechnologies.com/html/service/index.html" class="viewsite" ><i class="fe fe-globe me-2"></i>View Site</a>
-                    </li>
+
                     <li class="nav-item dropdown has-arrow dropdown-heads flag-nav">
                         <a class="nav-link" data-bs-toggle="dropdown" href="javascript:void(0);" role="button">
                             <img src="{{asset('assets')}}/img/flags/us1.png" alt="Flag" height="20">
@@ -198,7 +199,7 @@
                             </span>
                             <span class="user-content">
                                 <span class="user-name">{{Auth::user()->name}}</span>
-                                <span class="user-details">Admin</span>
+                                <span class="user-details">{{ Auth::user()->role->name ?? 'No Role' }}</span>
                             </span>
                         </a>
                         <div class="dropdown-menu menu-drop-user">

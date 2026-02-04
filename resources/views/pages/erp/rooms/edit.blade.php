@@ -124,38 +124,6 @@
                             <label>Select Room Type *</label>
                         </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <select name="ac_type" class="form-select" required>
-                                <option value="" disabled selected hidden></option>
-                                <option value="1">AC</option>
-                                <option value="2">Non AC</option>
-                            </select>
-                            <label>AC / Non AC *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <select class="form-select" required>
-                                <option value="" disabled selected hidden></option>
-                                <option>Breakfast</option>
-                                <option>Half Board</option>
-                                <option>Full Board</option>
-                            </select>
-                            <label>Select Meal *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="number" name="capacity" value="{{ old('capacity') }}" class="form-control"
-                                placeholder=" " required>
-                            <label>Capacity *</label>
-                        </div>
-                    </div>
-
                     <div class="col-md-6">
                         <div class="form-group">
                             <input type="number" name="floor" class="form-control" placeholder=" " required>
@@ -172,58 +140,6 @@
                                 <option value="maintenance">Maintenance</option>
                             </select>
                             <label>Status *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <select name="bed_type" class="form-select" required>
-                                <option value="" disabled selected hidden></option>
-                                <option value="Single">Single</option>
-                                <option value="Double">Double</option>
-                                <option value="King">King</option>
-                            </select>
-                            <label>Bed Type *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="number" name="price_per_night" class="form-control" placeholder=" ">
-                            <label>Rent per Night</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="number" name="bed_count" class="form-control" placeholder=" " required>
-                            <label>Number of Beds *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="number" class="form-control" placeholder=" " required>
-                            <label>Room Size (sq ft) *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <select class="form-select" required>
-                                <option value="" disabled selected hidden></option>
-                                <option>City View</option>
-                                <option>Sea View</option>
-                            </select>
-                            <label>View Type *</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <input type="text" name="phone" class="form-control " placeholder=" " required>
-                            <label>Contact Mobile *</label>
-                            <div class="invalid-feedback">Mobile is required</div>
                         </div>
                     </div>
 
