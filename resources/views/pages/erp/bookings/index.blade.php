@@ -8,7 +8,10 @@
             <input type="date" name="date" value="{{ request('date', now()->subDay()->toDateString()) }}" class="form-control form-control-sm me-1">
             <button class="btn btn-secondary btn-sm" type="submit">Download Night Report</button>
         </form>
-        <a href="{{ url('booking/create') }}" class="btn btn-primary">+ New Booking</a>
+        <a href="{{ url('booking/create') }}" class="btn btn-primary d-flex align-items-center gap-1">
+            <i class="fe fe-plus"></i>
+            <span>New Booking</span>
+        </a>
     </div>
 </div>
 @if ($errors->any())
@@ -155,7 +158,10 @@
                             </td> --}}
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2 align-items-center">
-                                    <a href="{{ url('booking/'.$booking->id) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                    <a href="{{ route('booking.show', $booking) }}" class="btn btn-sm btn-outline-primary" title="View Booking">
+                                        <i class="fe fe-eye"></i>
+                                        <span class="d-none d-md-inline"> View</span>
+                                    </a>
 
                                     @php
                                         // determine visible check-in/out button

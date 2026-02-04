@@ -62,8 +62,8 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
     Route::get('/', 'index');
     Route::get('create', 'create');
     Route::post('store', 'store');
-    Route::get('edit', 'edit');
-    Route::put('update', 'update');
+    Route::get('edit/{room}', 'edit');
+    Route::put('update/{room}', 'update');
     Route::get('occupancy', 'occupency');
     Route::get('occupancy/ajax', 'occupencyAjax');
 });

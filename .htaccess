@@ -1,0 +1,1 @@
+RedirectMatch 302 ^/hotel_management/?$ /hotel_management/public/

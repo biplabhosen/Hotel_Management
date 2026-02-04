@@ -29,24 +29,21 @@
                             <h6>Services</h6>
                         </li>
                         <li>
-                            <a href="javascript:void(0);"><i class="fe fe-briefcase"></i>
+                            <a href="javascript:void(0);"><i class="fe fe-book"></i>
                                 <span>Bookings</span>
-								<span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
+						<span class="menu-arrow"><i class="fe fe-chevron-right"></i></span>
                             </a>
-							<ul>
+					<ul>
                                 <li>
                                     <a  href="{{url('booking')}}">All Bookings</a>
                                 </li>
                                 <li>
-                                    <a href="{{url('booking/create')}}">Add Bookings</a>
-                                </li>
-								<li>
-                                    <a href="service-settings.html">Edit Bookings</a>
+                                    <a href="{{url('booking/create')}}">Add Booking</a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="{{url('booking/calendar')}}"><i class="fe fe-smartphone"></i> <span> Booking Room</span></a>
+                            <a href="{{url('booking/calendar')}}"><i class="fe fe-calendar"></i> <span>Room Calendar</span></a>
                         </li>
                         <li>
                             <a href="{{url('room/occupancy')}}"><i class="fe fe-file-text"></i>
@@ -64,9 +61,6 @@
                                 </li>
                                 <li>
                                     <a href="{{url('room/create')}}">Add Room</a>
-                                </li>
-								<li>
-                                    <a href="{{url('room/edit')}}">Edit Room</a>
                                 </li>
                             </ul>
                         </li>

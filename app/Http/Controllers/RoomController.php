@@ -13,12 +13,79 @@ class RoomController extends Controller
 {
     public function index()
     {
-        $rooms = Room::with([
+        $hotelId = auth()->user()->hotel_id;
+        $today = \Carbon\Carbon::today();
+
+        $baseQuery = Room::with([
             'bookingRooms.booking' => fn($q) =>
             $q->whereIn('status', ['reserved', 'confirmed', 'checked_in'])
-        ])->get();
+        ])
+            ->where('hotel_id', $hotelId)
+            ->orderBy('room_number');
 
-        return view("pages.erp.rooms.index" , compact('rooms'));
+        if (request()->filled('q')) {
+            $q = request()->q;
+            $baseQuery->where(function ($query) use ($q) {
+                $query->where('room_number', 'like', '%' . $q . '%')
+                    ->orWhere('floor', 'like', '%' . $q . '%');
+            });
+        }
+
+        if (request()->filled('room_type')) {
+            $baseQuery->where('room_type_id', request()->room_type);
+        }
+
+        if (request()->filled('status')) {
+            $status = request()->status;
+            if ($status === 'occupied') {
+                $baseQuery->whereHas('bookingRooms', function ($query) use ($today) {
+                    $query->where('check_in', '<=', $today)
+                        ->where('check_out', '>', $today)
+                        ->whereHas('booking', fn($b) => $b->where('status', 'checked_in'));
+                });
+            } elseif ($status === 'booked') {
+                $baseQuery->whereHas('bookingRooms', function ($query) use ($today) {
+                    $query->where('check_in', '<=', $today)
+                        ->where('check_out', '>', $today)
+                        ->whereHas('booking', fn($b) => $b->whereIn('status', ['reserved', 'confirmed']));
+                });
+            } elseif ($status === 'available') {
+                $baseQuery->whereDoesntHave('bookingRooms', function ($query) use ($today) {
+                    $query->where('check_in', '<=', $today)
+                        ->where('check_out', '>', $today)
+                        ->whereHas('booking', fn($b) => $b->whereIn('status', ['reserved', 'confirmed', 'checked_in']));
+                });
+            }
+        }
+
+        $rooms = $baseQuery->paginate(20)->withQueryString();
+
+        $kpiRooms = Room::with([
+            'bookingRooms.booking' => fn($q) =>
+            $q->whereIn('status', ['reserved', 'confirmed', 'checked_in'])
+        ])
+            ->where('hotel_id', $hotelId)
+            ->get();
+
+        $totalRooms = $kpiRooms->count();
+        $availableCount = $kpiRooms->filter(fn($r) => $r->status === 'available')->count();
+        $bookedCount = $kpiRooms->filter(fn($r) => $r->status === 'booked')->count();
+        $occupiedCount = $kpiRooms->filter(fn($r) => $r->status === 'occupied')->count();
+        $maintenanceCount = $kpiRooms->filter(fn($r) => ($r->getRawOriginal('status') ?? '') === 'maintenance')->count();
+        $occupancyRate = $totalRooms > 0 ? round(($occupiedCount / $totalRooms) * 100, 2) : 0;
+
+        $roomTypes = RoomType::where('hotel_id', $hotelId)->orderBy('name')->get();
+
+        return view("pages.erp.rooms.index", compact(
+            'rooms',
+            'roomTypes',
+            'totalRooms',
+            'availableCount',
+            'bookedCount',
+            'occupiedCount',
+            'maintenanceCount',
+            'occupancyRate'
+        ));
     }
 
     public function create()

@@ -78,7 +78,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <title>Hotel Paradise</title>
+    <title>{{ config('app.name', 'Hotel Paradise') }}</title>
 
     <!-- Favicons -->
     <link rel="shortcut icon" href="{{asset('assets')}}/img/favicon.png">
@@ -103,6 +103,50 @@
 
 <body>
     <div class="main-wrapper">
+        @if (request()->routeIs('login'))
+        <div class="position-absolute top-0 end-0 m-3 demo-floating" style="z-index:1050;">
+            <div class="card shadow-sm" style="min-width:240px;">
+                <div class="card-body p-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong>Demo users</strong>
+                        <small class="text-muted">Try now</small>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <button class="list-group-item list-group-item-action demo-fill-btn" data-email="biplobhosen214@gmail.com" data-password="12369874">
+                            <div class="fw-semibold">Hotel Paradise</div><small class="text-muted">biplobhosen214@gmail.com • 12369874</small>
+                        </button>
+                        <button class="list-group-item list-group-item-action demo-fill-btn" data-email="biplabhosen@icloud.com" data-password="123654">
+                            <div class="fw-semibold">Grand Palace Hotel</div><small class="text-muted">biplabhosen@icloud.com • 123654</small>
+                        </button>
+                        <button class="list-group-item list-group-item-action demo-fill-btn" data-email="biplobhosen@gmail.com" data-password="123654">
+                            <div class="fw-semibold">Hotel Florida</div><small class="text-muted">biplobhosen@gmail.com • 123654</small>
+                        </button>
+                        <small class="text-muted text-center mt-1">Professional PMS SaaS — Multi-tenant</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+        .demo-floating .list-group-item { cursor: pointer; }
+        .demo-floating .list-group-item:hover { background:#f8f9fa; }
+        </style>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.demo-fill-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e){
+                    e.preventDefault();
+                    var email = this.dataset.email;
+                    var pass = this.dataset.password;
+                    var emailField = document.querySelector('input[name="email"], input[type="email"]');
+                    var passField = document.querySelector('input[name="password"]');
+                    if (emailField) { emailField.value = email; emailField.focus(); }
+                    if (passField) { passField.value = pass; }
+                    [emailField, passField].forEach(function(el){ if(el){ el.classList.add('flash-demo'); setTimeout(function(){ el.classList.remove('flash-demo'); }, 1200); } });
+                });
+            });
+        });
+        </script>
+        @endif
         <div class="login-pages">
             <div class="container-fluid">
                 <div class="row align-items-center">
@@ -118,9 +162,8 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="login-content">
-                            <div class="login-contenthead">
+                            <div class="login-contenthead mb-1">
                                 <h5>Login</h5>
-                                <h6>We'll send a confirmation code to your email.</h6>
                             </div>
                             <form action="{{route('login')}}" method="POST">
                                 @csrf
@@ -176,9 +219,6 @@
                                 </button>
                                 </div>
                             </form>
-                            <div class="signinform text-center">
-                                <h4>Don’t have an account? <a href="{{route('register')}}" class="hover-a">Sign Up</a></h4>
-                            </div>
                         </div>
                     </div>
                 </div>

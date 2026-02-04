@@ -17,10 +17,58 @@
 						<input type="text" placeholder="Search" class="form-control">
 					</div>
                 </div>
-                <div>
-                    <h4>{{ Auth::user()->hotel->name }}</h4>
+                @php
+                    $hotelName = optional(Auth::user()->hotel)->name ?? config('app.name');
+                    $parts = preg_split('/\s+/', trim($hotelName));
+                    $initials = strtoupper(substr($parts[0] ?? '',0,1) . (isset($parts[1]) ? substr($parts[1],0,1) : ''));
+                @endphp
+                <div class="hotel-name-wrapper">
+                    @if(Auth::check() && optional(Auth::user()->hotel)->name)
+                    <div class="hotel-brand d-flex align-items-center">
+                        <div class="hotel-avatar me-2">
+                            <div class="avatar-initials badge-default text-muted">{{ $initials }}</div>
+                        </div>
+                        <div class="hotel-info">
+                            <div class="hotel-name">{{ $hotelName }}</div>
+                            <small class="text-muted">Professional PMS SaaS — Multi-tenant</small>
+                        </div>
+                    </div>
+                    @else
+                    <div class="hotel-brand">
+                        <div class="hotel-name h4 mb-0">{{ config('app.name') }}</div>
+                        <small class="text-muted">Professional PMS SaaS</small>
+                    </div>
+                    @endif
                 </div>
                 <ul class="nav user-menu">
+                    <!-- Demo users (visible on login page) -->
+                    {{-- @if (request()->routeIs('login'))
+                    <li class="nav-item demo-users-dropdown me-2">
+                        <div class="dropdown">
+                            <a class="btn btn-sm btn-outline-primary dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fe fe-user"></i> Demo Users
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end p-2">
+                                <li>
+                                    <button class="dropdown-item demo-fill" data-email="biplobhosen214@gmail.com" data-password="12369874">
+                                        <strong>Hotel Paradise</strong><br><small class="text-muted">biplobhosen214@gmail.com • 12369874</small>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item demo-fill" data-email="biplabhosen@icloud.com" data-password="123654">
+                                        <strong>Grand Palace Hotel</strong><br><small class="text-muted">biplabhosen@icloud.com • 123654</small>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item demo-fill" data-email="biplobhosen@gmail.com" data-password="123654">
+                                        <strong>Hotel Florida</strong><br><small class="text-muted">biplobhosen@gmail.com • 123654</small>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif --}}
+
                     <!-- Notifications -->
 
                     <li class="nav-item dropdown has-arrow dropdown-heads flag-nav">
@@ -236,3 +284,36 @@
             </div>
 
         </div>
+
+        @if (request()->routeIs('login'))
+        <style>
+        .demo-users-dropdown .dropdown-toggle { font-weight:600; }
+        .demo-users-dropdown .dropdown-menu { min-width: 320px; }
+        .demo-users-dropdown .dropdown-item { cursor:pointer; }
+        .flash-demo { box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25); transition: box-shadow .2s; }
+        .hotel-brand .hotel-name { font-weight:700; font-size:1rem; }
+        .hotel-brand .hotel-info small { font-size: 12px; }
+        .avatar-initials { width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-weight:600; border-radius:50%; }
+        </style>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.demo-fill').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var email = this.dataset.email;
+                    var pass = this.dataset.password;
+                    var emailField = document.querySelector('input[name="email"], input[type="email"]');
+                    var passField = document.querySelector('input[name="password"]');
+                    if (emailField) { emailField.value = email; emailField.focus(); }
+                    if (passField) { passField.value = pass; }
+                    [emailField,passField].forEach(function(el) {
+                        if (el) {
+                            el.classList.add('flash-demo');
+                            setTimeout(function(){ el.classList.remove('flash-demo'); }, 1200);
+                        }
+                    });
+                });
+            });
+        });
+        </script>
+        @endif
