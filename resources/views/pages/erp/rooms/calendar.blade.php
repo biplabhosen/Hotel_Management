@@ -48,192 +48,161 @@
 @endsection
 
 @section('css')
-<!-- FullCalendar core CSS -->
-<!-- FullCalendar Scheduler (includes resourceTimeline) CSS -->
-<script src="/assets/plugins/fullcalendar-scheduler/index.global.min.js"></script>
-
-@php
-    $localSchedulerCss = public_path('assets/plugins/fullcalendar-scheduler/index.global.min.css');
-    $localOldCss = public_path('assets/plugins/fullcalendar/fullcalendar.min.css');
-@endphp
-
-@if (file_exists($localSchedulerCss))
-    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar-scheduler/index.global.min.css') }}">
-@elseif (file_exists($localOldCss))
-    <link rel="stylesheet" href="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.css') }}">
-@else
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.css">
-@endif
+<!-- FullCalendar Scheduler (v6 index.global) CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.css">
 @endsection
 
 @section('js')
+<!-- FullCalendar Scheduler (v6 index.global) JS; do not mix with local/npm builds -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js"></script>
 <script>
-function loadScript(url){
-    return new Promise(function(resolve, reject){
-        var s = document.createElement('script');
-        s.src = url;
-        s.async = true;
-        s.onload = function(){ resolve(url); };
-        s.onerror = function(e){ reject(e); };
-        document.head.appendChild(s);
-    });
-}
-
-async function tryLoad(urls){
-    for(const u of urls){
-        try{
-            await loadScript(u);
-            console.info('Loaded', u);
-            return true;
-        }catch(e){
-            console.warn('Failed loading', u, e);
-        }
-    }
-    return false;
-}
-
 document.addEventListener('DOMContentLoaded', async function () {
     const calendarEl = document.getElementById('room-calendar');
     const fallbackEl = document.getElementById('room-calendar-fallback');
 
-    // try scheduler bundle on popular CDNs
-    const cdnUrls = [
-        'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js',
-        'https://unpkg.com/fullcalendar-scheduler@6.1.8/index.global.min.js'
-    ];
-    let ok = await tryLoad(cdnUrls);
-    if (!ok) {
-        console.warn('CDN scheduler not available, trying local FullCalendar files...');
-        const localScripts = [
-            '{{ asset("assets/plugins/fullcalendar/fullcalendar.min.js") }}',
-            '{{ asset("assets/plugins/fullcalendar/jquery.fullcalendar.js") }}'
-        ];
-        ok = await tryLoad(localScripts);
-        if (!ok) {
-    const localScheduler = "{{ file_exists(public_path('assets/plugins/fullcalendar-scheduler/index.global.min.js')) ? asset('assets/plugins/fullcalendar-scheduler/index.global.min.js') : '' }}";
-    const localOld = "{{ file_exists(public_path('assets/plugins/fullcalendar/fullcalendar.min.js')) ? asset('assets/plugins/fullcalendar/fullcalendar.min.js') : '' }}";
-
-    let ok = false;
-
-    if (localScheduler) {
-        ok = await tryLoad([localScheduler]);
+    // Console error inspection: fail fast if the scheduler bundle isn't loaded.
+    if (!window.FullCalendar) {
+        console.error('Scheduler not loaded: FullCalendar global is missing. Check the CDN script tag.');
+        return; // keep fallback visible
     }
 
-    if (!ok) {
-        const cdnUrls = [
-            'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.8/index.global.min.js',
-            'https://unpkg.com/fullcalendar-scheduler@6.1.8/index.global.min.js'
-        ];
-        ok = await tryLoad(cdnUrls);
+    // FullCalendar version consistency check (must be v6.x).
+    if (FullCalendar.version && !FullCalendar.version.startsWith('6.')) {
+        console.warn('FullCalendar version mismatch:', FullCalendar.version);
     }
 
-    if (!ok && localOld) {
-        // attempt to load older local fullcalendar (jQuery plugin)
-        ok = await tryLoad([localOld, '{{ asset("assets/plugins/fullcalendar/jquery.fullcalendar.js") }}']);
+    // FullCalendar.ResourceTimeline availability check (resource + resourceTimeline plugins are required).
+    const resourceTimelineExport = FullCalendar.ResourceTimeline || FullCalendar.resourceTimelinePlugin;
+    const hasGlobalResourceTimeline = Array.isArray(FullCalendar.globalPlugins)
+        && FullCalendar.globalPlugins.some(p => p && p.name === '@fullcalendar/resource-timeline');
+    if (!resourceTimelineExport && !hasGlobalResourceTimeline) {
+        console.error('Scheduler not loaded: resourceTimeline plugin missing. Use fullcalendar-scheduler v6 index.global build.');
+        return; // keep fallback visible
     }
 
-    if (!ok) {
-        console.error('Failed to load FullCalendar from local files and CDNs. Falling back to server-rendered grid.');
-        return;
-    }
+    // Network tab verification: confirm calendar resources/events endpoints return 200 with JSON.
+    const roomsUrl = '{{ route("room.calendar.resources") }}';
+    const bookingsUrl = '{{ route("room.calendar.api") }}';
+    console.info('Fetching', roomsUrl, 'and', bookingsUrl, '; verify status/response in Network tab.');
 
-    // hide fallback grid when any calendar library loads
-    if (fallbackEl) fallbackEl.style.display = 'none';
-            console.error('Failed to load FullCalendar from CDNs and local files. Falling back to server-rendered grid.');
-            // leave fallback visible
-            return;
+    const fetchJson = async (url) => {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) {
+            console.error('API error', url, res.status, res.statusText);
+            throw new Error('API error: ' + url);
         }
+        return res.json();
+    };
+
+    // Normalize resources to FullCalendar format: { id, title, ... }.
+    const mapRoom = (room) => {
+        // Accept both Room models and already-normalized resource objects.
+        const id = room.id ?? room.room_id ?? room.roomId ?? room.number;
+        const number = room.room_number ?? room.number ?? room.code ?? id;
+        const type = room.room_type ?? room.type ?? room.roomType ?? '';
+        const title = room.title ?? room.name ?? (type ? `${number} - ${type}` : String(number));
+        return {
+            ...room,
+            id: id != null ? String(id) : null,
+            title: title != null ? String(title) : null,
+            room_number: room.room_number ?? number,
+            room_type: room.room_type ?? type
+        };
+    };
+
+    // Normalize bookings to FullCalendar events with resourceId mapping.
+    const mapBooking = (booking) => {
+        // Accept both Booking models and already-normalized event objects.
+        const id = booking.id ?? booking.booking_id ?? booking.bookingId;
+        const roomId = booking.resourceId ?? booking.resource_id ?? booking.room_id ?? booking.roomId ?? booking.room?.id ?? booking.room?.room_id;
+        const start = booking.start ?? booking.start_date ?? booking.startDate ?? booking.check_in;
+        const end = booking.end ?? booking.end_date ?? booking.endDate ?? booking.check_out;
+        const guest = booking.guest_name ?? booking.guest ?? booking.customer_name ?? '';
+        const status = booking.status ?? booking.extendedProps?.status ?? '';
+        const title = booking.title ?? (guest ? guest : (id ? `Booking #${id}` : 'Booking'));
+        return {
+            ...booking,
+            id: id != null ? String(id) : null,
+            title,
+            start,
+            end,
+            allDay: booking.allDay ?? true,
+            resourceId: roomId != null ? String(roomId) : null,
+            extendedProps: {
+                ...(booking.extendedProps || {}),
+                booking_id: booking.extendedProps?.booking_id ?? id,
+                guest_name: booking.extendedProps?.guest_name ?? guest,
+                status,
+                check_in: booking.extendedProps?.check_in ?? start,
+                check_out: booking.extendedProps?.check_out ?? end
+            }
+        };
+    };
+
+    let rooms = [];
+    let bookings = [];
+
+    try {
+        const roomPayload = await fetchJson(roomsUrl);
+        const bookingPayload = await fetchJson(bookingsUrl);
+
+        rooms = (Array.isArray(roomPayload) ? roomPayload : (roomPayload.data ?? roomPayload.rooms ?? []))
+            .map(mapRoom)
+            .filter(r => r.id && r.title);
+
+        bookings = (Array.isArray(bookingPayload) ? bookingPayload : (bookingPayload.data ?? bookingPayload.bookings ?? []))
+            .map(mapBooking)
+            .filter(e => e.id && e.start && e.end && e.resourceId);
+    } catch (e) {
+        console.error('Failed to load API data', e);
+        return; // keep fallback visible
     }
 
-    // hide fallback grid when any calendar library loads
+    // Hide fallback only after data loads and scheduler is ready.
     if (fallbackEl) fallbackEl.style.display = 'none';
 
-    // prefer resourceTimeline if plugin available
-    const hasResourceTimeline = !!FullCalendar.resourceTimelinePlugin || (FullCalendar && FullCalendar.ResourceTimeline);
-
-    const commonOptions = {
-        // scheduler license (open-source / CC non-commercial attribution)
+    const calendarOptions = {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+        initialView: 'resourceTimelineDay',
         height: 'auto',
+        resourceAreaHeaderContent: 'Rooms',
+        resourceAreaWidth: '220px',
+        resources: rooms,
+        events: bookings,
+        editable: false,
+        selectable: false,
+        eventStartEditable: false,
+        eventDurationEditable: false,
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: hasResourceTimeline ? 'resourceTimelineWeek,resourceTimelineMonth' : 'dayGridMonth,timeGridWeek'
+            right: 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth'
         },
-        eventClick: function(info) {
-            // booking id is event.id formatted as bookingId-roomId in controller
-            const bookingId = (info.event.id || '').toString().split('-')[0];
+        eventClick: function (info) {
+            // Read-only: allow quick view without edits.
+            const bookingId = info.event.extendedProps.booking_id || info.event.id;
             if (bookingId) {
                 window.open('/booking/' + bookingId, '_blank');
             }
-        },
-        events: '{{ route("room.calendar.api") }}'
+        }
     };
 
-    let calendar;
+    // For global bundle, plugins are pre-registered; only attach if exported (non-global builds).
+    if (resourceTimelineExport) {
+        calendarOptions.plugins = [ resourceTimelineExport ];
+    }
 
-    try {
-        if (hasResourceTimeline) {
-            calendar = new FullCalendar.Calendar(calendarEl, Object.assign({}, commonOptions, {
-                plugins: [ FullCalendar.resourceTimelinePlugin ],
-                initialView: 'resourceTimelineWeek',
-                resourceAreaHeaderContent: 'Rooms',
-                resourceAreaWidth: '180px',
-                resources: { url: '{{ route("room.calendar.resources") }}' }
-            }));
-        } else {
-            // fallback to regular month view with room info in event titles
-            calendar = new FullCalendar.Calendar(calendarEl, Object.assign({}, commonOptions, {
-                initialView: 'dayGridMonth'
-            }));
-        }
+    const calendar = new FullCalendar.Calendar(calendarEl, calendarOptions);
 
-        // Enhance events with popovers/tooltips showing quick actions/details
-        calendar.render();
+    calendar.render();
 
-        // Initialize popovers for events after render (for resourceTimeline plugin)
-        calendar.on('eventDidMount', function(info){
-            try{
-                // build popover HTML
-                const props = info.event.extendedProps || {};
-                const bookingId = props.booking_id || (info.event.id||'').toString().split('-')[0];
-                const guest = props.guest_name || '';
-                const status = props.status || '';
-                const checkIn = props.check_in || '';
-                const checkOut = props.check_out || '';
-
-                const content = `
-                    <div style="font-size:13px">
-                        <div><strong>Guest:</strong> ${guest}</div>
-                        <div><strong>Status:</strong> ${status}</div>
-                        <div><strong>Check-in:</strong> ${checkIn}</div>
-                        <div><strong>Check-out:</strong> ${checkOut}</div>
-                        <div class="mt-2">
-                            <a class="btn btn-sm btn-primary me-1" href="/booking/${bookingId}" target="_blank">View</a>
-                        </div>
-                    </div>
-                `;
-
-                // attach bootstrap popover
-                const pop = new bootstrap.Popover(info.el, {
-                    title: info.event.title,
-                    content: content,
-                    html: true,
-                    trigger: 'hover focus',
-                    placement: 'top',
-                    container: 'body'
-                });
-            }catch(e){
-                console.warn('eventDidMount popover error', e);
-            }
-        });
-    } catch (e) {
-        console.error('FullCalendar initialization failed', e);
-        // leave a simple message in the calendar container
-        if (calendarEl) {
-            calendarEl.innerHTML = '<div class="alert alert-danger">Interactive calendar failed to initialize. Please check console for details.</div>';
-        }
+    // calendar.getResources() sanity test (requires resource plugin).
+    if (typeof calendar.getResources === 'function') {
+        console.info('Resources loaded:', calendar.getResources().length);
+    } else {
+        console.warn('calendar.getResources() is unavailable; scheduler plugin may not be loaded.');
     }
 });
 </script>
 @endsection
+
