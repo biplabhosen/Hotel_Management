@@ -172,7 +172,7 @@
                                         $canAddPayment = false;
                                         if((float)($booking->due_amount ?? 0) > 0 && !in_array($booking->status, ['cancelled','no_show'])){
                                             if($booking->status === 'checked_out'){
-                                                $canAddPayment = auth()->user()->hasRole('manager');
+                                                $canAddPayment = optional(auth()->user()->role)->name === 'manager';
                                             } else {
                                                 $canAddPayment = true;
                                             }

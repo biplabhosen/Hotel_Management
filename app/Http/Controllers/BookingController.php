@@ -8,6 +8,7 @@ use App\Models\Booking;
 use App\Models\BookingRoom;
 use App\Models\Guest;
 use App\Models\Room;
+use App\Models\RoomHousekeeping;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -130,6 +131,7 @@ class BookingController extends Controller
         $rooms = Room::with('roomType')
             ->where('hotel_id', $hotelId)
             ->where('room_type_id', $request->room_type_id)
+            ->whereNotIn('status', ['dirty', 'cleaning', 'maintenance', 'out_of_order'])
             ->whereDoesntHave('bookingRooms', function ($q) use ($request) {
                 $q->where(function ($overlap) use ($request) {
                     $overlap->whereBetween('check_in', [$request->check_in, $request->check_out])
@@ -243,6 +245,10 @@ class BookingController extends Controller
                 $room = Room::with('roomType')
                     ->where('hotel_id', $hotelId)
                     ->findOrFail($roomId);
+
+                if (in_array($room->status, ['dirty', 'cleaning', 'maintenance', 'out_of_order'], true)) {
+                    throw new \Exception("Room {$room->room_number} is currently unavailable due to housekeeping/maintenance.");
+                }
 
                 $isBooked = BookingRoom::where('room_id', $room->id)
                     ->where('check_in', '<', $request->check_out)
@@ -386,11 +392,29 @@ class BookingController extends Controller
             return back()->withErrors("Outstanding balance: BDT {$due}. Please settle before check-out.");
         }
 
-        // Update all rooms with today's check-out timestamp
-        $booking->bookingRooms()->update(['checked_out_at' => now()]);
+        DB::transaction(function () use ($booking, $bookingRooms) {
+            // Update all rooms with today's check-out timestamp
+            $booking->bookingRooms()->update(['checked_out_at' => now()]);
 
-        // Update booking status
-        $booking->update(['status' => 'checked_out']);
+            // Update booking status
+            $booking->update(['status' => 'checked_out']);
+
+            foreach ($bookingRooms as $bookingRoom) {
+                Room::where('hotel_id', $booking->hotel_id)
+                    ->where('id', $bookingRoom->room_id)
+                    ->update(['status' => 'dirty']);
+
+                RoomHousekeeping::create([
+                    'hotel_id' => $booking->hotel_id,
+                    'room_id' => $bookingRoom->room_id,
+                    'booking_id' => $booking->id,
+                    'booking_room_id' => $bookingRoom->id,
+                    'task_type' => 'checkout_cleaning',
+                    'status' => 'pending',
+                    'notes' => 'Auto-created from checkout #' . $booking->id,
+                ]);
+            }
+        });
 
         return back()->with('success', 'Guest checked out successfully.');
     }
@@ -408,7 +432,7 @@ class BookingController extends Controller
         }
 
         if ($booking->status === 'checked_out') {
-            return $user->hasRole('manager');
+            return optional($user->role)->name === 'manager';
         }
 
         return true; // reserved or checked-in with due

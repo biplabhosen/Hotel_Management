@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BookingCheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HotelController;
+use App\Http\Controllers\HousekeepingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +68,18 @@ Route::middleware('auth')->prefix('room')->controller(RoomController::class)->gr
     Route::put('update/{room}', 'update');
     Route::get('occupancy', 'occupency');
     Route::get('occupancy/ajax', 'occupencyAjax');
+});
+
+Route::middleware('auth')->prefix('checkout')->controller(BookingCheckoutController::class)->group(function () {
+    Route::get('/', 'index')->name('booking.checkout.index');
+    Route::post('/{booking}', 'checkout')->name('booking.checkout.submit');
+});
+
+Route::middleware('auth')->prefix('housekeeping')->controller(HousekeepingController::class)->group(function () {
+    Route::get('/', 'index')->name('housekeeping.index');
+    Route::get('/room/{room}', 'show')->name('housekeeping.show');
+    Route::post('/task/{task}/assign', 'assign')->name('housekeeping.assign');
+    Route::post('/task/{task}/complete', 'complete')->name('housekeeping.complete');
 });
 
 // Simple web API endpoint to provide occupancy summary to dashboard (requires auth)

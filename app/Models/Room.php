@@ -18,6 +18,7 @@ class Room extends Model
         'room_type_id',
         'room_number',
         'floor',
+        'status',
     ];
 
 
@@ -28,8 +29,14 @@ class Room extends Model
         'floor' => 'integer',
     ];
 
-    public function getStatusAttribute(): string
+    public function getStatusAttribute($value): string
     {
+        $persistedStatus = $value ?? 'available';
+
+        if (in_array($persistedStatus, ['dirty', 'cleaning', 'maintenance', 'out_of_order'], true)) {
+            return $persistedStatus;
+        }
+
         if (! $this->relationLoaded('bookingRooms')) {
             $this->load('bookingRooms.booking');
         }
@@ -45,17 +52,17 @@ class Room extends Model
             return 'occupied';
         }
 
-        // BOOKED
+        // RESERVED
         if ($this->bookingRooms->contains(
             fn($br) =>
             $br->check_in <= $today &&
                 $br->check_out > $today &&
                 in_array($br->booking?->status, ['confirmed', 'reserved'])
         )) {
-            return 'booked';
+            return 'reserved';
         }
 
-        return 'available';
+        return $persistedStatus;
     }
 
 
@@ -80,5 +87,10 @@ class Room extends Model
     public function bookingRooms()
     {
         return $this->hasMany(BookingRoom::class, 'room_id');
+    }
+
+    public function housekeepingTasks()
+    {
+        return $this->hasMany(RoomHousekeeping::class, 'room_id');
     }
 }

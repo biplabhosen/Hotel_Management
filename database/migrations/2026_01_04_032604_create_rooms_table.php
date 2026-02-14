@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('room_type_id');
             $table->string('room_number');
             $table->integer('floor')->nullable();
-            $table->enum('status', ['available', 'booked', 'maintenance'])->default('available');
+            $table->enum('status', ['available', 'occupied', 'maintenance', 'dirty', 'cleaning', 'out_of_order'])->default('available');
             $table->timestamps();
 
             $table->unique(['hotel_id', 'room_number']);

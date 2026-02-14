@@ -44,4 +44,14 @@ class Hotel extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function staff()
+    {
+        return $this->hasMany(Staff::class);
+    }
+
+    public function housekeepingTasks()
+    {
+        return $this->hasMany(RoomHousekeeping::class);
+    }
 }

@@ -67,6 +67,11 @@ class Booking extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function housekeepingTasks()
+    {
+        return $this->hasMany(RoomHousekeeping::class);
+    }
+
     /**
      * Helpers
      */
