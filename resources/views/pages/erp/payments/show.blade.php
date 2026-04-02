@@ -126,9 +126,14 @@
                                 <strong>Outstanding Balance</strong><br>
                                 <small class="text-dark">{{ number_format($dueAmount, 2) }} BDT is still pending</small>
                             </div>
-                            <a href="{{ route('payment.create', $booking) }}" class="btn btn-sm btn-warning">
-                                <i class="fas fa-plus-circle"></i> Record Payment
-                            </a>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('payment.sslcommerz.checkout', $booking) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-credit-card"></i> Pay Online
+                                </a>
+                                <a href="{{ route('payment.create', $booking) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-plus-circle"></i> Record Payment
+                                </a>
+                            </div>
                         </div>
                     </div>
                 @else

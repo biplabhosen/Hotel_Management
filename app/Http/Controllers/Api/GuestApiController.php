@@ -17,6 +17,11 @@ use Illuminate\Validation\ValidationException;
 
 class GuestApiController extends Controller
 {
+    public function hotelBySlug(string $slug)
+    {
+        return $this->hotelInfo(Hotel::findByTenantSlugOrFail($slug));
+    }
+
     public function hotelInfo(Hotel $hotel)
     {
         $hotel->loadCount([
@@ -28,7 +33,9 @@ class GuestApiController extends Controller
             'success' => true,
             'data' => [
                 'id' => $hotel->id,
+                'slug' => $hotel->slug,
                 'name' => $hotel->name,
+                'logo' => $hotel->logo,
                 'email' => $hotel->email,
                 'phone' => $hotel->phone,
                 'address' => $hotel->address,
@@ -37,6 +44,20 @@ class GuestApiController extends Controller
                 'rooms_count' => $hotel->rooms_count,
             ],
         ]);
+    }
+
+    public function searchAvailability(Request $request)
+    {
+        $hotelSlug = $request->query('hotel_slug');
+
+        if (empty($hotelSlug)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'hotel_slug query parameter is required.',
+            ], 422);
+        }
+
+        return $this->availabilityCheck(Hotel::findByTenantSlugOrFail($hotelSlug), $request);
     }
 
     public function amenities(Hotel $hotel)

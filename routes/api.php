@@ -14,6 +14,8 @@ Route::get('hotel', function () {
 });
 
 Route::prefix('guest')->scopeBindings()->group(function () {
+    Route::get('hotel-by-slug/{slug}', [GuestApiController::class, 'hotelBySlug']);
+    Route::get('search-availability', [GuestApiController::class, 'searchAvailability']);
     Route::get('hotels/{hotel}', [GuestApiController::class, 'hotelInfo']);
     Route::get('hotels/{hotel}/amenities', [GuestApiController::class, 'amenities']);
     Route::get('hotels/{hotel}/room-types', [GuestApiController::class, 'roomTypes']);

@@ -168,6 +168,12 @@
                             <a href="{{ route('booking.show', $booking) }}" class="btn btn-lg btn-outline-secondary">Cancel</a>
                         </div>
                     </form>
+
+                    <div class="text-center mt-3 pt-3 border-top">
+                        <a href="{{ route('payment.sslcommerz.checkout', $booking) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-credit-card me-1"></i> Or Pay Online via SSLCommerz
+                        </a>
+                    </div>
                 @endif
             </div>
         </div>

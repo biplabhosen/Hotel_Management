@@ -20,6 +20,7 @@ class Payment extends Model
         'type',
         'status',
         'reference',
+        'transaction_id',
         'payment_date',
     ];
 
@@ -45,6 +46,11 @@ class Payment extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function sslCommerzTransaction()
+    {
+        return $this->hasOne(SslCommerzTransaction::class);
     }
 
     /**

@@ -87,3 +87,17 @@ Route::get('api/occupancy/summary', [RoomController::class, 'apiSummary'])->midd
 
 // Booking statistics API (used by dashboard SPA polling)
 Route::get('api/bookings/stats', [App\Http\Controllers\HomeController::class, 'apiBookingStats'])->middleware('auth');
+
+// SSLCommerz Payment Gateway - Authenticated routes (checkout initiation)
+Route::middleware('auth')->prefix('payment')->controller(PaymentController::class)->group(function () {
+    Route::get('booking/{booking}/online', 'sslcommerzCheckout')->name('payment.sslcommerz.checkout');
+    Route::post('booking/{booking}/sslcommerz-pay', 'sslcommerzPay')->name('payment.sslcommerz.pay');
+});
+
+// SSLCommerz Payment Gateway - Callback routes (no auth, no CSRF — server-to-server)
+Route::prefix('payment/sslcommerz')->controller(PaymentController::class)->group(function () {
+    Route::post('/success', 'sslcommerzSuccess')->name('payment.sslcommerz.success');
+    Route::post('/fail', 'sslcommerzFail')->name('payment.sslcommerz.fail');
+    Route::post('/cancel', 'sslcommerzCancel')->name('payment.sslcommerz.cancel');
+    Route::post('/ipn', 'sslcommerzIpn')->name('payment.sslcommerz.ipn');
+});
