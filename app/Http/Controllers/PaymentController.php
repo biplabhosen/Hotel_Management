@@ -561,9 +561,11 @@ class PaymentController extends Controller
         $payment_options = $sslc->makePayment($post_data, 'hosted');
 
         if (!is_array($payment_options)) {
-            print_r($payment_options);
-            $payment_options = [];
+            return back()->withErrors(['payment' => 'Failed to initiate payment. Please try again.']);
         }
+
+        // Return payment form or redirect as needed
+        return response($payment_options);
     }
 
     /**
