@@ -12,60 +12,68 @@
 <!-- Summary Cards -->
 <div class="row g-3 mb-4">
     <div class="col-md-6 col-lg-3">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100 border-0" style="background: rgba(5, 150, 105, 0.03); border: 1px solid rgba(5, 150, 105, 0.1) !important; border-left: 4px solid #10b981 !important;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">Total Paid</p>
-                        <h4 class="mb-0 text-success" style="font-weight: 600;">{{ number_format($summary['total_paid'], 2) }}</h4>
-                        <small class="text-muted">BDT</small>
+                        <p class="small mb-1" style="color: #059669; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; font-size:0.75rem;">Total Paid</p>
+                        <h4 class="mb-0" style="font-weight: 700; color: #064e3b; letter-spacing:-0.5px;">{{ number_format($summary['total_paid'], 2) }}</h4>
+                        <small style="color: #059669; font-weight:600;">BDT</small>
                     </div>
-                    <i class="fas fa-check-circle text-success opacity-50" style="font-size: 2rem;"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(5, 150, 105, 0.1);">
+                        <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.2rem;"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-md-6 col-lg-3">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100 border-0" style="background: rgba(217, 119, 6, 0.03); border: 1px solid rgba(217, 119, 6, 0.1) !important; border-left: 4px solid #f59e0b !important;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">Pending</p>
-                        <h4 class="mb-0 text-warning" style="font-weight: 600;">{{ number_format($summary['total_pending'], 2) }}</h4>
-                        <small class="text-muted">BDT</small>
+                        <p class="small mb-1" style="color: #d97706; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; font-size:0.75rem;">Pending</p>
+                        <h4 class="mb-0" style="font-weight: 700; color: #78350f; letter-spacing:-0.5px;">{{ number_format($summary['total_pending'], 2) }}</h4>
+                        <small style="color: #d97706; font-weight:600;">BDT</small>
                     </div>
-                    <i class="fas fa-clock text-warning opacity-50" style="font-size: 2rem;"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(217, 119, 6, 0.1);">
+                        <i class="fas fa-clock" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-md-6 col-lg-3">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100 border-0" style="background: rgba(220, 38, 38, 0.03); border: 1px solid rgba(220, 38, 38, 0.1) !important; border-left: 4px solid #ef4444 !important;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">Failed</p>
-                        <h4 class="mb-0 text-danger" style="font-weight: 600;">{{ number_format($summary['total_failed'], 2) }}</h4>
-                        <small class="text-muted">BDT</small>
+                        <p class="small mb-1" style="color: #dc2626; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; font-size:0.75rem;">Failed</p>
+                        <h4 class="mb-0" style="font-weight: 700; color: #7f1d1d; letter-spacing:-0.5px;">{{ number_format($summary['total_failed'], 2) }}</h4>
+                        <small style="color: #dc2626; font-weight:600;">BDT</small>
                     </div>
-                    <i class="fas fa-times-circle text-danger opacity-50" style="font-size: 2rem;"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(220, 38, 38, 0.1);">
+                        <i class="fas fa-times-circle" style="color: #ef4444; font-size: 1.2rem;"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-md-6 col-lg-3">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100 border-0" style="background: rgba(71, 85, 105, 0.03); border: 1px solid rgba(71, 85, 105, 0.1) !important; border-left: 4px solid #64748b !important;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <p class="text-muted small mb-1">Refunded</p>
-                        <h4 class="mb-0 text-info" style="font-weight: 600;">{{ number_format($summary['total_refunded'], 2) }}</h4>
-                        <small class="text-muted">BDT</small>
+                        <p class="small mb-1" style="color: #475569; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; font-size:0.75rem;">Refunded</p>
+                        <h4 class="mb-0" style="font-weight: 700; color: #1e293b; letter-spacing:-0.5px;">{{ number_format($summary['total_refunded'], 2) }}</h4>
+                        <small style="color: #475569; font-weight:600;">BDT</small>
                     </div>
-                    <i class="fas fa-undo text-info opacity-50" style="font-size: 2rem;"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background: rgba(71, 85, 105, 0.1);">
+                        <i class="fas fa-undo" style="color: #64748b; font-size: 1.2rem;"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,9 +124,9 @@
 </div>
 
 <!-- Payments Table -->
-<div class="card shadow-sm">
-    <div class="card-header bg-light border-bottom">
-        <h6 class="mb-0 text-dark">All Payments</h6>
+<div class="card shadow-sm border-0" style="border: 1px solid #e2e8f0 !important;">
+    <div class="card-header border-bottom" style="background: #f8fafc; padding: 16px 20px;">
+        <h6 class="mb-0" style="color: #334155; font-weight: 600;">All Payments</h6>
     </div>
     <div class="card-body p-0">
         @if($payments->count() > 0)
@@ -149,7 +157,8 @@
                                     <small>{{ $payment->booking->guest->full_name }}</small>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-dark fw-bold">{{ number_format($payment->amount, 2) }} BDT</span>
+                                    <span style="font-weight: 700; color: #1e293b;">{{ number_format($payment->amount, 2) }}</span>
+                                    <small style="color: #64748b; font-weight: 600;">BDT</small>
                                 </td>
                                 <td>
                                     <small>{{ ucfirst(str_replace('_', ' ', $payment->method)) }}</small>
@@ -158,7 +167,13 @@
                                     <small class="badge bg-secondary bg-opacity-25">{{ ucfirst($payment->type) }}</small>
                                 </td>
                                 <td>
-                                    <span class="badge bg-{{ $payment->status == 'paid' ? 'success' : ($payment->status == 'failed' ? 'danger' : ($payment->status == 'refunded' ? 'secondary' : 'warning')) }}">
+                                    @php
+                                        $sColor = 'warning'; $sBg = 'rgba(245, 158, 11, 0.1)'; $sText = '#b45309';
+                                        if($payment->status == 'paid') { $sBg = 'rgba(16, 185, 129, 0.1)'; $sText = '#047857'; }
+                                        elseif($payment->status == 'failed') { $sBg = 'rgba(239, 68, 68, 0.1)'; $sText = '#b91c1c'; }
+                                        elseif($payment->status == 'refunded') { $sBg = 'rgba(100, 116, 139, 0.1)'; $sText = '#334155'; }
+                                    @endphp
+                                    <span class="badge" style="background: {{ $sBg }}; color: {{ $sText }}; padding: 6px 10px; font-weight: 600; letter-spacing: 0.3px;">
                                         {{ ucfirst($payment->status) }}
                                     </span>
                                 </td>

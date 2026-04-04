@@ -11,12 +11,18 @@
     <a href="{{ url('payment') }}" class="btn btn-outline-secondary">← Back to Payments</a>
 </div>
 
+@php
+    $checkIn = $booking->bookingRooms->min('check_in');
+    $checkOut = $booking->bookingRooms->max('check_out');
+    $arrival = $checkIn ? \Carbon\Carbon::parse($checkIn)->format('d M Y') : 'N/A';
+    $departure = $checkOut ? \Carbon\Carbon::parse($checkOut)->format('d M Y') : 'N/A';
+@endphp
 <div class="row g-4">
     <div class="col-lg-8">
         <!-- Guest Info Card - Prominent at Top -->
-        <div class="card shadow-sm mb-4 border-start border-primary" style="border-left: 4px solid #0D6EFF !important;">
-            <div class="card-header bg-light border-bottom">
-                <h5 class="mb-0 text-dark"><i class="fas fa-user-circle text-primary"></i> Guest Information</h5>
+        <div class="card shadow-sm mb-4 border-0" style="border: 1px solid rgba(67, 56, 202, 0.1) !important; border-top: 4px solid #4f46e5 !important;">
+            <div class="card-header border-bottom" style="background: rgba(67, 56, 202, 0.02); padding: 16px 20px;">
+                <h6 class="mb-0" style="color: #312e81; font-weight: 600;"><i class="fas fa-user-circle" style="color: #4f46e5; margin-right: 6px;"></i> Guest Information</h6>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -56,90 +62,90 @@
         </div>
 
         <!-- Stay Dates Card -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-light border-bottom">
-                <h6 class="mb-0 text-dark">Stay Duration</h6>
+        <div class="card shadow-sm mb-4 border-0" style="border: 1px solid #e2e8f0 !important;">
+            <div class="card-header border-bottom" style="background: #f8fafc; padding: 16px 20px;">
+                <h6 class="mb-0" style="color: #334155; font-weight: 600;">Stay Duration</h6>
             </div>
             <div class="card-body">
                 <div class="row text-center">
                     <div class="col-md-6 border-end">
-                        <p class="mb-1 text-muted small">Arrival Date</p>
-                        <p class="h5 mb-0 text-primary">{{ \Carbon\Carbon::parse($booking->arrival)->format('d M Y') }}</p>
+                        <p class="mb-1 text-muted small" style="text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Arrival Date</p>
+                        <p class="h5 mb-0" style="color: #4338ca; font-weight: 700;">{{ $arrival }}</p>
                     </div>
                     <div class="col-md-6">
-                        <p class="mb-1 text-muted small">Departure Date</p>
-                        <p class="h5 mb-0 text-danger">{{ \Carbon\Carbon::parse($booking->departure)->format('d M Y') }}</p>
+                        <p class="mb-1 text-muted small" style="text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Departure Date</p>
+                        <p class="h5 mb-0" style="color: #059669; font-weight: 700;">{{ $departure }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Payment Summary Card -->
-        <div class="card shadow-sm mb-4 border-top border-success" style="border-top: 3px solid #198754 !important;">
-            <div class="card-header bg-light border-bottom">
-                <h5 class="mb-0 text-dark"><i class="fas fa-wallet text-success"></i> Payment Summary</h5>
+        <div class="card shadow-sm mb-4 border-0" style="border: 1px solid rgba(5, 150, 105, 0.1) !important; border-top: 4px solid #10b981 !important;">
+            <div class="card-header border-bottom" style="background: rgba(5, 150, 105, 0.02); padding: 16px 20px;">
+                <h6 class="mb-0" style="color: #064e3b; font-weight: 600;"><i class="fas fa-wallet" style="color: #10b981; margin-right: 6px;"></i> Payment Summary</h6>
             </div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <div class="p-4 bg-light rounded text-center border-0 shadow-sm">
-                            <p class="text-muted mb-2" style="font-size: 0.9rem;">Total Amount</p>
-                            <h3 class="mb-0 text-primary" style="font-weight: 700; font-size: 1.8rem;">{{ number_format($total, 2) }}</h3>
-                            <small class="text-muted" style="font-size: 0.85rem;">BDT</small>
+                        <div class="p-4 rounded text-center border shadow-sm" style="background: rgba(67, 56, 202, 0.03); border-color: rgba(67, 56, 202, 0.15) !important;">
+                            <p class="mb-2" style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #4f46e5;">Total Amount</p>
+                            <h3 class="mb-0" style="font-weight: 800; font-size: 1.8rem; color: #312e81; letter-spacing: -0.5px;">{{ number_format($total, 2) }}</h3>
+                            <small style="font-size: 0.8rem; font-weight: 700; color: #6366f1;">BDT</small>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="p-4 rounded text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #198754 0%, #155724 100%);">
-                            <p class="text-white mb-2" style="font-size: 0.9rem; opacity: 0.9;">Paid Amount</p>
-                            <h3 class="mb-0 text-white" style="font-weight: 700; font-size: 1.8rem;">
-                                <i class="fas fa-check-circle"></i> {{ number_format($paidAmount, 2) }}
+                        <div class="p-4 rounded text-center border shadow-sm" style="background: rgba(5, 150, 105, 0.03); border-color: rgba(5, 150, 105, 0.15) !important;">
+                            <p class="mb-2" style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #059669;">Paid Amount</p>
+                            <h3 class="mb-0" style="font-weight: 800; font-size: 1.8rem; color: #064e3b; letter-spacing: -0.5px;">
+                                <i class="fas fa-check-circle" style="font-size: 1.4rem;"></i> {{ number_format($paidAmount, 2) }}
                             </h3>
-                            <small class="text-white" style="font-size: 0.85rem; opacity: 0.9;">BDT</small>
+                            <small style="font-size: 0.8rem; font-weight: 700; color: #059669;">BDT</small>
                         </div>
                     </div>
                     <div class="col-md-4">
                         @if($dueAmount > 0)
-                            <div class="p-4 rounded text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);">
-                                <p class="text-dark mb-2" style="font-size: 0.9rem; font-weight: 500;">Due Amount</p>
-                                <h3 class="mb-0 text-dark" style="font-weight: 700; font-size: 1.8rem;">
-                                    <i class="fas fa-exclamation-triangle"></i> {{ number_format($dueAmount, 2) }}
+                            <div class="p-4 rounded text-center border shadow-sm" style="background: rgba(217, 119, 6, 0.03); border-color: rgba(217, 119, 6, 0.2) !important;">
+                                <p class="mb-2" style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #d97706;">Due Amount</p>
+                                <h3 class="mb-0" style="font-weight: 800; font-size: 1.8rem; color: #78350f; letter-spacing: -0.5px;">
+                                    <i class="fas fa-exclamation-triangle" style="font-size: 1.4rem;"></i> {{ number_format($dueAmount, 2) }}
                                 </h3>
-                                <small class="text-dark" style="font-size: 0.85rem; font-weight: 500;">BDT</small>
+                                <small style="font-size: 0.8rem; font-weight: 700; color: #d97706;">BDT</small>
                             </div>
                         @else
-                            <div class="p-4 rounded text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #198754 0%, #155724 100%);">
-                                <p class="text-white mb-2" style="font-size: 0.9rem; opacity: 0.9;">Balance Paid</p>
-                                <h3 class="mb-0 text-white" style="font-weight: 700; font-size: 1.8rem;">
-                                    <i class="fas fa-check-circle"></i> {{ number_format($dueAmount, 2) }}
+                            <div class="p-4 rounded text-center border shadow-sm" style="background: rgba(5, 150, 105, 0.03); border-color: rgba(5, 150, 105, 0.15) !important;">
+                                <p class="mb-2" style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #059669;">Balance</p>
+                                <h3 class="mb-0" style="font-weight: 800; font-size: 1.8rem; color: #064e3b; letter-spacing: -0.5px;">
+                                    <i class="fas fa-check-double" style="font-size: 1.4rem;"></i> 0.00
                                 </h3>
-                                <small class="text-white" style="font-size: 0.85rem; opacity: 0.9;">BDT</small>
+                                <small style="font-size: 0.8rem; font-weight: 700; color: #059669;">BDT</small>
                             </div>
                         @endif
                     </div>
                 </div>
 
                 @if($dueAmount > 0)
-                    <div class="alert alert-warning mt-3 mb-0 border-warning" style="background-color: #FFF3CD; border-left: 4px solid #FFC107;">
+                    <div class="alert mt-3 mb-0" style="background: rgba(217, 119, 6, 0.04); border: 1px solid rgba(217, 119, 6, 0.2); border-left: 4px solid #f59e0b; border-radius: 6px;">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <i class="fas fa-exclamation-triangle text-warning"></i>
-                                <strong>Outstanding Balance</strong><br>
-                                <small class="text-dark">{{ number_format($dueAmount, 2) }} BDT is still pending</small>
+                                <i class="fas fa-exclamation-triangle" style="color: #d97706;"></i>
+                                <strong style="color: #92400e; margin-left: 5px;">Outstanding Balance</strong><br>
+                                <small style="color: #78350f; margin-left: 23px;">{{ number_format($dueAmount, 2) }} BDT is still pending</small>
                             </div>
                             <div class="d-flex gap-2">
-                                <a href="{{ route('payment.sslcommerz.checkout', $booking) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ route('payment.sslcommerz.checkout', $booking) }}" class="btn btn-sm" style="background: #4f46e5; color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;">
                                     <i class="fas fa-credit-card"></i> Pay Online
                                 </a>
-                                <a href="{{ route('payment.create', $booking) }}" class="btn btn-sm btn-warning">
+                                <a href="{{ route('payment.create', $booking) }}" class="btn btn-sm" style="background: #10b981; color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;">
                                     <i class="fas fa-plus-circle"></i> Record Payment
                                 </a>
                             </div>
                         </div>
                     </div>
                 @else
-                    <div class="alert alert-success mt-3 mb-0 border-success" style="background-color: #D1E7DD; border-left: 4px solid #198754;">
-                        <i class="fas fa-check-circle text-success"></i>
-                        <strong>Fully Paid</strong> - No outstanding balance
+                    <div class="alert mt-3 mb-0" style="background: rgba(5, 150, 105, 0.04); border: 1px solid rgba(5, 150, 105, 0.2); border-left: 4px solid #10b981; border-radius: 6px;">
+                        <i class="fas fa-check-circle" style="color: #059669;"></i>
+                        <strong style="color: #064e3b; margin-left: 5px;">Fully Paid</strong> <span style="color: #065f46;">- No outstanding balance</span>
                     </div>
                 @endif
             </div>
@@ -148,9 +154,9 @@
 
     <!-- Sidebar -->
     <div class="col-lg-4">
-        <div class="card shadow-sm sticky-top" style="top: 20px;">
-            <div class="card-header bg-light border-bottom">
-                <h6 class="mb-0 text-dark">Booking Summary</h6>
+        <div class="card shadow-sm border-0 sticky-top" style="top: 20px; border: 1px solid #e2e8f0 !important;">
+            <div class="card-header border-bottom" style="background: #f8fafc; padding: 16px 20px;">
+                <h6 class="mb-0" style="color: #334155; font-weight: 600;">Booking Summary</h6>
             </div>
             <div class="card-body">
                 <div class="mb-3">
@@ -181,9 +187,9 @@
 </div>
 
 <!-- Payment History -->
-<div class="card shadow-sm mt-4">
-    <div class="card-header bg-light border-bottom">
-        <h6 class="mb-0 text-dark">Payment History</h6>
+<div class="card shadow-sm mt-4 border-0" style="border: 1px solid #e2e8f0 !important;">
+    <div class="card-header border-bottom" style="background: #f8fafc; padding: 16px 20px;">
+        <h6 class="mb-0" style="color: #334155; font-weight: 600;">Payment History</h6>
     </div>
     <div class="card-body p-0">
         @if($payments->count() > 0)
@@ -209,7 +215,13 @@
                                 <td><small class="badge bg-secondary bg-opacity-25">{{ ucfirst($payment->type) }}</small></td>
                                 <td><small class="text-muted">{{ $payment->reference ?? '-' }}</small></td>
                                 <td>
-                                    <span class="badge bg-{{ $payment->status == 'paid' ? 'success' : ($payment->status == 'failed' ? 'danger' : 'warning') }}">
+                                    @php
+                                        $pStatusColor = 'warning'; $pStatusBg = 'rgba(245, 158, 11, 0.1)'; $pStatusText = '#b45309';
+                                        if($payment->status == 'paid') { $pStatusBg = 'rgba(16, 185, 129, 0.1)'; $pStatusText = '#047857'; }
+                                        elseif($payment->status == 'failed') { $pStatusBg = 'rgba(239, 68, 68, 0.1)'; $pStatusText = '#b91c1c'; }
+                                        elseif($payment->status == 'refunded') { $pStatusBg = 'rgba(100, 116, 139, 0.1)'; $pStatusText = '#334155'; }
+                                    @endphp
+                                    <span class="badge" style="background: {{ $pStatusBg }}; color: {{ $pStatusText }}; padding: 6px 10px; font-weight: 600; letter-spacing: 0.3px;">
                                         {{ ucfirst($payment->status) }}
                                     </span>
                                 </td>
